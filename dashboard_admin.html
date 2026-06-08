@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Admin Dashboard - SRMA 19 Bantul</title>
+    <link rel="icon" type="image/webp" href="srma.webp">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        :root {
+            --sidebar-width: 260px;
+            --sidebar-collapsed: 70px;
+            --header-height: 64px;
+            --primary: #0d6efd;
+            --primary-dark: #0a58ca;
+            --bg-body: #f4f6f9;
+            --card-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-body);
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: #ffffff;
+            border-right: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            z-index: 1050;
+            transition: var(--transition);
+            box-shadow: 0 0 30px rgba(0,0,0,0.04);
+        }
+        .sidebar.collapsed { width: var(--sidebar-collapsed); }
+        .sidebar-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #f1f5f9;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-height: var(--header-height);
+            background: var(--primary);
+            color: #fff;
+        }
+        .sidebar-header .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        .sidebar-header .logo-area img {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+        .sidebar-header .logo-area .logo-text {
+            font-weight: 800;
+            font-size: 1.1rem;
+            letter-spacing: -0.3px;
+            transition: var(--transition);
+        }
+        .sidebar.collapsed .sidebar-header .logo-area .logo-text {
+            opacity: 0; width: 0; display: none;
+        }
+        .sidebar-header .toggle-btn {
+            background: none; border: none; color: #fff; font-size: 1.2rem; cursor: pointer;
+            padding: 4px 8px; border-radius: 8px; transition: var(--transition); opacity: 0.8;
+        }
+        .sidebar-header .toggle-btn:hover { opacity: 1; }
+        .sidebar-nav {
+            flex: 1;
+            padding: 12px 8px;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        .sidebar-nav .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 10px 14px;
+            border-radius: 10px;
+            color: #475569;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            margin-bottom: 2px;
+            transition: all 0.2s;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .sidebar-nav .nav-item:hover, .sidebar-nav .nav-item.active {
+            background: var(--primary);
+            color: #fff;
+        }
+        .sidebar-nav .nav-item i {
+            width: 20px;
+            text-align: center;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+        .sidebar-nav .nav-item span {
+            transition: var(--transition);
+        }
+        .sidebar.collapsed .sidebar-nav .nav-item span {
+            opacity: 0; width: 0; display: none;
+        }
+        .sidebar.collapsed .sidebar-nav .nav-item {
+            justify-content: center;
+            padding: 10px 0;
+        }
+        .sidebar-footer {
+            padding: 12px 16px;
+            border-top: 1px solid #e2e8f0;
+            transition: var(--transition);
+        }
+        .sidebar.collapsed .sidebar-footer { padding: 8px; }
+        .sidebar-footer .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        .sidebar.collapsed .sidebar-footer .user-info { justify-content: center; }
+        .sidebar-footer .user-avatar {
+            width: 36px; height: 36px; border-radius: 50%;
+            background: var(--primary); color: #fff;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 0.9rem; flex-shrink: 0; overflow: hidden;
+        }
+        .sidebar-footer .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .sidebar-footer .user-details {
+            transition: var(--transition);
+            white-space: nowrap;
+            font-size: 0.85rem;
+        }
+        .sidebar.collapsed .sidebar-footer .user-details { opacity: 0; width: 0; display: none; }
+        .sidebar-footer .btn-logout {
+            width: 100%; border-radius: 8px; font-size: 0.8rem; font-weight: 600; transition: var(--transition);
+        }
+        .sidebar.collapsed .sidebar-footer .btn-logout {
+            width: auto; padding: 6px 10px; border-radius: 50%; display: flex; justify-content: center;
+        }
+        .sidebar.collapsed .sidebar-footer .btn-logout span { display: none; }
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 20px 24px;
+            min-height: 100vh;
+            transition: var(--transition);
+            width: 100%;
+        }
+        .main-content.expanded { margin-left: var(--sidebar-collapsed); }
+        /* ===== MOBILE HEADER ACTIONS (SCAN QR SLIDER ONLY) ===== */
+        .mobile-header-actions {
+            display: none;
+            position: fixed;
+            top: 0;
+            right: 0;
+            z-index: 1060;
+            align-items: center;
+            padding: 8px 12px;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(8px);
+            border-bottom-left-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .mobile-scan-slider {
+            display: none;
+            position: fixed;
+            top: 12px;
+            right: 0;
+            z-index: 1060;
+            align-items: center;
+            background: rgba(255,255,255,0.95);
+            border-radius: 30px 0 0 30px;
+            box-shadow: -2px 2px 8px rgba(0,0,0,0.08);
+            padding: 4px 4px 4px 8px;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateX(calc(100% - 40px)); /* Closed: only toggle arrow visible */
+            gap: 4px;
+        }
+        .mobile-scan-slider.open {
+            transform: translateX(0);
+        }
+        .mobile-scan-slider .slider-toggle {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-size: 0.8rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease;
+            padding: 0;
+        }
+        .mobile-scan-slider .slider-toggle i {
+            transition: transform 0.3s ease;
+        }
+        .mobile-scan-slider.open .slider-toggle i {
+            transform: rotate(180deg);
+        }
+        .mobile-scan-slider .slider-scan-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 12px rgba(13,110,253,0.3);
+            transition: background 0.2s, transform 0.2s;
+            flex-shrink: 0;
+        }
+        .mobile-scan-slider .slider-scan-btn:hover {
+            background: var(--primary-dark);
+            transform: scale(1.05);
+        }
+        /* ===== MOBILE BOTTOM NAV ===== */
+        .bottom-nav {
+            display: none;
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            background: #fff;
+            border-top: 1px solid #e2e8f0;
+            z-index: 1050;
+            padding: 4px 0 env(safe-area-inset-bottom, 8px);
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+        }
+        .bottom-nav .bottom-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            padding: 4px 0;
+            color: #64748b;
+            font-size: 0.6rem;
+            font-weight: 500;
+            border: none;
+            background: none;
+            cursor: pointer;
+            transition: color 0.2s;
+            text-decoration: none;
+        }
+        .bottom-nav .bottom-item.active { color: var(--primary); }
+        .bottom-nav .bottom-item i { font-size: 1.2rem; margin-bottom: 2px; }
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .main-content { margin-left: 0 !important; padding: 16px 12px 80px 12px; }
+            .bottom-nav { display: flex; }
+            .mobile-header-actions { display: flex; }
+            .mobile-scan-slider { display: flex; }
+        }
+        @media (min-width: 769px) {
+            .mobile-scan-slider { display: none; }
+        }
+        /* ===== UTILITY ===== */
+        .badge-status { border-radius: 50px; padding: 4px 12px; font-size: 0.7rem; font-weight: 600; }
+        .badge-status.aktif { background: #d1fae5; color: #065f46; }
+        .badge-status.nonaktif { background: #f1f5f9; color: #475569; }
+        .badge-status.lulus { background: #fef3c7; color: #92400e; }
+        .badge-status.hadir { background: #d1fae5; color: #065f46; }
+        .badge-status.izin { background: #dbeafe; color: #1e40af; }
+        .badge-status.tidak { background: #fef3c7; color: #92400e; }
+        .badge-status.sakit { background: #fce4ec; color: #c62828; }
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .stat-card {
+            background: #fff;
+            border-radius: 14px;
+            padding: 20px;
+            box-shadow: var(--card-shadow);
+            transition: transform 0.2s;
+            border: none;
+        }
+        .stat-card:hover { transform: translateY(-3px); }
+        .stat-card .stat-icon {
+            width: 44px; height: 44px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem; margin-bottom: 12px;
+        }
+        .stat-card .stat-icon.blue { background: #dbeafe; color: #0d6efd; }
+        .stat-card .stat-icon.green { background: #d1fae5; color: #10b981; }
+        .stat-card .stat-icon.orange { background: #fef3c7; color: #f59e0b; }
+        .stat-card .stat-icon.purple { background: #ede9fe; color: #8b5cf6; }
+        .stat-card .stat-value {
+            font-size: 1.8rem; font-weight: 800; color: #1e293b; line-height: 1.2;
+        }
+        .stat-card .stat-label {
+            font-size: 0.8rem; color: #64748b; font-weight: 500;
+            text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .table-card {
+            background: #fff; border-radius: 14px; box-shadow: var(--card-shadow);
+            overflow: hidden; margin-bottom: 24px;
+        }
+        .table-card .card-header {
+            padding: 16px 20px; border-bottom: 1px solid #f1f5f9;
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;
+        }
+        .table-card .card-header h6 { font-weight: 700; color: #1e293b; margin: 0; }
+        .table-card .table-wrap { padding: 0; overflow-x: auto; }
+        .table-card table { margin: 0; font-size: 0.85rem; }
+        .table-card table th {
+            font-weight: 600; color: #64748b; text-transform: uppercase; font-size: 0.7rem;
+            letter-spacing: 0.5px; padding: 12px 16px; background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .table-card table td { padding: 10px 16px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+        .table-card table tbody tr:last-child td { border-bottom: none; }
+        .table-card table tbody tr:hover { background: #f8fafc; }
+        .filter-group {
+            display: flex; flex-wrap: wrap; gap: 8px; align-items: center; width: 100%;
+        }
+        .filter-group input, .filter-group select {
+            border-radius: 50px; padding: 6px 14px; font-size: 0.85rem;
+            border: 1px solid #e2e8f0; background: #fff; transition: border-color 0.2s;
+            min-width: 0; flex: 1 1 auto; max-width: 100%;
+        }
+        .filter-group input:focus, .filter-group select:focus {
+            border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px rgba(13,110,253,0.1);
+        }
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 2000;
+            display: flex; align-items: center; justify-content: center; padding: 16px;
+        }
+        .modal-box {
+            background: #fff; border-radius: 20px; padding: 28px 24px;
+            max-width: 520px; width: 100%; max-height: 90vh; overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2); animation: slideUp 0.25s ease;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .toast-container {
+            position: fixed; top: 24px; right: 24px; z-index: 99999;
+            display: flex; flex-direction: column; gap: 10px; max-width: 400px; width: 100%;
+            pointer-events: none;
+        }
+        .toast-item {
+            pointer-events: auto; background: #ffffff; border-radius: 14px;
+            padding: 16px 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.04);
+            display: flex; align-items: center; gap: 14px;
+            animation: toastIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            transform-origin: top right; border: 1px solid rgba(0,0,0,0.04);
+        }
+        .toast-item.removing { animation: toastOut 0.3s ease forwards; }
+        @keyframes toastIn {
+            from { opacity: 0; transform: translateX(40px) scale(0.95); }
+            to { opacity: 1; transform: translateX(0) scale(1); }
+        }
+        @keyframes toastOut {
+            from { opacity: 1; transform: translateX(0) scale(1); }
+            to { opacity: 0; transform: translateX(40px) scale(0.95); }
+        }
+        .toast-icon {
+            width: 40px; height: 40px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem; flex-shrink: 0;
+        }
+        .toast-icon.success { background: #ecfdf5; color: #10b981; }
+        .toast-icon.error { background: #fef2f2; color: #ef4444; }
+        .toast-icon.warning { background: #fffbeb; color: #f59e0b; }
+        .toast-icon.info { background: #eff6ff; color: #3b82f6; }
+        .toast-content { flex: 1; min-width: 0; }
+        .toast-title { font-weight: 600; font-size: 0.9rem; color: #1e293b; margin-bottom: 2px; }
+        .toast-message { font-size: 0.82rem; color: #64748b; margin: 0; line-height: 1.4; }
+        .toast-close {
+            background: none; border: none; color: #cbd5e1; cursor: pointer;
+            font-size: 1rem; padding: 4px; transition: color 0.2s; flex-shrink: 0;
+        }
+        .toast-close:hover { color: #64748b; }
+        .toast-progress {
+            position: absolute; bottom: 0; left: 0; height: 3px;
+            background: currentColor; border-radius: 0 0 14px 14px;
+            animation: toastProgress 3.5s linear forwards; opacity: 0.25;
+        }
+        .toast-item .toast-progress { display: none; }
+        .toast-item.has-progress .toast-progress { display: block; }
+        @keyframes toastProgress {
+            from { width: 100%; }
+            to { width: 0%; }
+        }
+        .barcode-panel {
+            background: #f8fafc; border-radius: 12px; padding: 16px; margin-top: 12px;
+        }
+        .barcode-panel .form-check { margin-right: 12px; font-size: 0.85rem; }
+        .barcode-panel input[type="text"] {
+            border-radius: 50px; border: 1px solid #e2e8f0; padding: 4px 12px; font-size: 0.8rem; width: 160px;
+        }
+        .barcode-panel select {
+            border-radius: 50px; border: 1px solid #e2e8f0; padding: 4px 12px; font-size: 0.8rem;
+        }
+        .preview-modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 9999;
+            padding: 20px; overflow-y: auto;
+        }
+        .preview-modal.show { display: flex; align-items: center; justify-content: center; }
+        .preview-content {
+            background: #fff; border-radius: 20px; padding: 24px;
+            max-width: 95%; max-height: 90vh; overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        .preview-content .preview-header {
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 2px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 16px;
+        }
+        .preview-content .preview-header h4 { font-weight: 700; margin: 0; }
+        .preview-content .preview-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .main-content { margin-left: 0 !important; padding: 16px 12px 80px 12px; }
+            .bottom-nav { display: flex; }
+            .mobile-header-actions { display: flex; }
+            .mobile-scan-slider { display: flex; }
+            .filter-group input, .filter-group select { width: 100%; flex: 1 1 100%; }
+            .barcode-panel .row { flex-direction: column; gap: 8px; }
+            .barcode-panel input[type="text"] { width: 100%; }
+            .modal-box { padding: 20px 16px; }
+            .toast-container { top: 12px; right: 12px; left: 12px; max-width: none; }
+            .stat-grid { grid-template-columns: repeat(2, 1fr); }
+            .table-card table { font-size: 0.75rem; }
+            .table-card table th, .table-card table td { padding: 6px 8px; }
+        }
+        @media (min-width: 769px) and (max-width: 1200px) {
+            .filter-group input, .filter-group select { flex: 1 1 120px; }
+        }
+        /* Tambahan CSS untuk card-modern */
+        .card-modern {
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: var(--card-shadow);
+            padding: 16px 20px;
+            margin-bottom: 16px;
+        }
+        .card-modern.p-0 {
+            padding: 0;
+        }
+        .btn-refresh {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            color: #475569;
+            border-radius: 50px;
+            padding: 4px 14px;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+        .btn-refresh:hover {
+            background: #e2e8f0;
+            color: #1e293b;
+        }
+        /* Bottom sheet animation */
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ===== SIDEBAR ===== -->
+<div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <div class="logo-area">
+            <img src="srma.webp" alt="SRMA 19">
+            <span class="logo-text">SRMA 19</span>
+        </div>
+        <button class="toggle-btn" id="toggleSidebar" title="Toggle Sidebar">
+            <i class="fas fa-chevron-left" id="collapseIcon"></i>
+        </button>
+    </div>
+    <div class="sidebar-nav">
+        <a class="nav-item" data-page="dashboard" onclick="navigate('dashboard')">
+            <i class="fas fa-tachometer-alt"></i><span>Dashboard</span>
+        </a>
+        <a class="nav-item" data-page="peserta" onclick="navigate('peserta')">
+            <i class="fas fa-users"></i><span>Data Peserta</span>
+        </a>
+        <a class="nav-item" data-page="absensi" onclick="navigate('absensi')">
+            <i class="fas fa-clipboard-list"></i><span>Data Absensi</span>
+        </a>
+        <a class="nav-item" data-page="izin" onclick="navigate('izin')">
+            <i class="fas fa-file-medical-alt"></i><span>Data Izin</span>
+        </a>
+        <a class="nav-item" data-page="jadwal" onclick="navigate('jadwal')">
+            <i class="fas fa-calendar-alt"></i><span>Jadwal Kegiatan</span>
+        </a>
+        <a class="nav-item" data-page="petugas" onclick="navigate('petugas')">
+            <i class="fas fa-user-shield"></i><span>Data Petugas</span>
+        </a>
+        <a class="nav-item" data-page="wali_asuh" onclick="navigate('wali_asuh')">
+            <i class="fas fa-users-cog"></i><span>Wali Asuh</span>
+        </a>
+        <a class="nav-item" data-page="alumni" onclick="navigate('alumni')">
+            <i class="fas fa-graduation-cap"></i><span>Data Alumni</span>
+        </a>
+        <a class="nav-item" data-page="laporan" onclick="navigate('laporan')">
+            <i class="fas fa-chart-pie"></i><span>Laporan Summary</span>
+        </a>
+        <hr class="my-2">
+        <a class="nav-item" data-page="absensi_qr" onclick="navigate('absensi_qr')">
+            <i class="fas fa-qrcode"></i><span>Scan QR</span>
+        </a>
+        <a class="nav-item" href="profile.html"><i class="fas fa-user-circle"></i><span>Profil</span></a>
+        <a class="nav-item" href="index.html" target="_blank"><i class="fas fa-globe"></i><span>Website</span></a>
+    </div>
+    <div class="sidebar-footer">
+        <div class="user-info">
+            <div class="user-avatar" id="userAvatar">A</div>
+            <div class="user-details">
+                <strong id="userName">Admin</strong>
+                <small id="userRole" class="text-muted">admin</small>
+            </div>
+        </div>
+        <button class="btn btn-outline-danger btn-logout" onclick="handleLogout()">
+            <i class="fas fa-sign-out-alt me-2"></i><span>Logout</span>
+        </button>
+    </div>
+</div>
+<!-- ===== MOBILE HEADER ACTIONS (SCAN QR SLIDER ONLY) ===== -->
+<div class="mobile-header-actions" id="mobileHeaderActions">
+    <div id="mobileScanSlider" class="mobile-scan-slider">
+        <button id="toggleScanSlider" class="slider-toggle" aria-label="Toggle Scan QR">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        <a href="scanqr_admin.html" class="slider-scan-btn" title="Scan QR">
+            <i class="fas fa-qrcode"></i>
+        </a>
+    </div>
+</div>
+<!-- ===== MOBILE BOTTOM NAV ===== -->
+<div class="bottom-nav" id="bottomNav">
+    <a class="bottom-item" data-page="dashboard" onclick="navigate('dashboard')">
+        <i class="fas fa-home"></i><span>Dashboard</span>
+    </a>
+    <a class="bottom-item" data-page="peserta" onclick="navigate('peserta')">
+        <i class="fas fa-user-friends"></i><span>Peserta</span>
+    </a>
+    <a class="bottom-item" data-page="absensi" onclick="navigate('absensi')">
+        <i class="fas fa-clipboard-check"></i><span>Absensi</span>
+    </a>
+    <a class="bottom-item" data-page="izin" onclick="navigate('izin')">
+        <i class="fas fa-file-medical-alt"></i><span>Izin</span>
+    </a>
+    <button class="bottom-item" onclick="toggleBottomSheet()">
+        <i class="fas fa-ellipsis-h"></i><span>Lainnya</span>
+    </button>
+</div>
+
+<!-- ===== MAIN CONTENT ===== -->
+<div class="main-content" id="mainContent">
+    <div class="text-center py-5">
+        <div class="spinner-border text-primary" role="status"></div>
+        <p class="text-muted mt-2">Memuat dashboard...</p>
+    </div>
+</div>
+
+<!-- ===== TOAST CONTAINER ===== -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- ===== SCRIPTS ===== -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script src="api.js"></script>
+<script src="auth.js"></script>
+<script src="all_modules.js"></script>
+
+<script>
+    // ============================================================
+    //  BOTTOM SHEET "LAINNYA" – untuk Admin
+    //  Tidak termasuk: Dashboard, Peserta, Absensi, Izin, Scan QR
+    //  Termasuk: Jadwal, Wali Asuh, Alumni, Laporan, Petugas, Profil, Website, Logout
+    // ============================================================
+    window.toggleBottomSheet = function() {
+        const existing = document.querySelector('.bottom-sheet-overlay');
+        if (existing) { existing.remove(); return; }
+        const overlay = document.createElement('div');
+        overlay.className = 'bottom-sheet-overlay';
+        overlay.style.cssText = `
+            position: fixed; bottom: 60px; left: 0; right: 0; z-index: 1060;
+            background: #fff; border-radius: 16px 16px 0 0;
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.15);
+            padding: 16px 20px 24px;
+            max-height: 60vh; overflow-y: auto;
+            animation: slideUp 0.3s ease;
+        `;
+        overlay.innerHTML = `
+            <div style="display:flex;flex-direction:column;gap:6px;">
+                <button class="btn btn-outline-secondary w-100 text-start" onclick="navigate('jadwal');this.closest('.bottom-sheet-overlay').remove()">
+                    <i class="fas fa-calendar-alt me-2"></i> Jadwal Kegiatan
+                </button>
+                <button class="btn btn-outline-secondary w-100 text-start" onclick="navigate('wali_asuh');this.closest('.bottom-sheet-overlay').remove()">
+                    <i class="fas fa-users-cog me-2"></i> Wali Asuh
+                </button>
+                <button class="btn btn-outline-secondary w-100 text-start" onclick="navigate('alumni');this.closest('.bottom-sheet-overlay').remove()">
+                    <i class="fas fa-graduation-cap me-2"></i> Data Alumni
+                </button>
+                <button class="btn btn-outline-secondary w-100 text-start" onclick="navigate('laporan');this.closest('.bottom-sheet-overlay').remove()">
+                    <i class="fas fa-chart-pie me-2"></i> Laporan Summary
+                </button>
+                <button class="btn btn-outline-secondary w-100 text-start" onclick="navigate('petugas');this.closest('.bottom-sheet-overlay').remove()">
+                    <i class="fas fa-user-shield me-2"></i> Data Petugas
+                </button>
+                <hr>
+                <button class="btn btn-outline-secondary w-100 text-start" onclick="window.location.href='profile.html'">
+                    <i class="fas fa-user-circle me-2"></i> Profil
+                </button>
+                <button class="btn btn-outline-secondary w-100 text-start" onclick="window.open('index.html', '_blank')">
+                    <i class="fas fa-globe me-2"></i> Website
+                </button>
+                <button class="btn btn-outline-danger w-100 text-start" onclick="handleLogout();this.closest('.bottom-sheet-overlay').remove()">
+                    <i class="fas fa-sign-out-alt me-2"></i> Logout
+                </button>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+        setTimeout(() => {
+            document.addEventListener('click', function closeSheet(e) {
+                if (!overlay.contains(e.target) && !e.target.closest('.bottom-item')) {
+                    overlay.remove();
+                    document.removeEventListener('click', closeSheet);
+                }
+            });
+        }, 100);
+    };
+
+    // ============================================================
+    //  SIDEBAR TOGGLE
+    // ============================================================
+    document.getElementById('toggleSidebar')?.addEventListener('click', function() {
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('mainContent');
+        const icon = document.getElementById('collapseIcon');
+        if (sidebar && mainContent && icon) {
+            const isCollapsed = sidebar.classList.contains('collapsed');
+            if (isCollapsed) {
+                sidebar.classList.remove('collapsed');
+                mainContent.classList.remove('expanded');
+                icon.className = 'fas fa-chevron-left';
+            } else {
+                sidebar.classList.add('collapsed');
+                mainContent.classList.add('expanded');
+                icon.className = 'fas fa-chevron-right';
+            }
+        }
+    });
+
+    // ============================================================
+    //  SLIDING SCAN QR LOGIC
+    // ============================================================
+    document.addEventListener('DOMContentLoaded', function() {
+        const slider = document.getElementById('mobileScanSlider');
+        const toggle = document.getElementById('toggleScanSlider');
+
+        if (slider && toggle) {
+            toggle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                slider.classList.toggle('open');
+                const icon = toggle.querySelector('i');
+                if (slider.classList.contains('open')) {
+                    icon.className = 'fas fa-chevron-right';
+                } else {
+                    icon.className = 'fas fa-chevron-left';
+                }
+            });
+
+            // Close if clicked outside
+            document.addEventListener('click', function(e) {
+                if (!slider.contains(e.target) && !e.target.closest('.bottom-item')) {
+                    slider.classList.remove('open');
+                    const icon = toggle.querySelector('i');
+                    icon.className = 'fas fa-chevron-left';
+                }
+            });
+        }
+    });
+
+    console.log('✅ Dashboard Admin loaded with sliding scan QR');
+</script>
+
+</body>
+</html>
