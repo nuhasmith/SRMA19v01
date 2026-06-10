@@ -5,7 +5,7 @@
 
 const API = (() => {
   // ⚠️ GANTI dengan URL Web App Google Apps Script Anda
-  const BASE_URL = 'https://script.google.com/macros/s/AKfycbzzndGZ7yH2YN8_thEFO9eCaGl-_stuzMozaBSHjpFbr3e87OcG8Suu8Csgxw7wujr-/exec';
+  const BASE_URL = 'https://script.google.com/macros/s/AKfycbxD3wGs_z8tZQ3ZkgEfiKUnFs_xZGUQ-vqnHIxK1pbV76mNsZeEslF1xQ_2FloRi7nX/exec';
 
   /**
    * Request handler untuk GET (query string)
