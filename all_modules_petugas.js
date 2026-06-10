@@ -1,7 +1,7 @@
 // ============================================================
 //  ALL_MODULES_PETUGAS.JS – Gabungan semua modul Dashboard Petugas
 //  SRMA 19 Bantul
-//  Versi: 5.3 – Force Render, Robust Init
+//  Versi: 6.2 – Fix updateSesiDisplay, Robust Init
 // ============================================================
 
 (function() {
@@ -162,21 +162,11 @@
     // ============================================================
 
     function renderDashboardPetugas(container) {
-        console.log('renderDashboardPetugas dipanggil');
-        if (!container) {
-            console.error('Container tidak ditemukan');
-            return;
-        }
-
-        // Hapus konten lama
         container.innerHTML = '';
 
         const cached = getCachedData();
         const user = Auth.getCurrentUser();
         const petugasNama = user.nama || '';
-
-        console.log('Cache:', cached);
-        console.log('Petugas:', petugasNama);
 
         // Hitung murid dampingan dari cache
         let pesertaDampingan = [];
@@ -532,13 +522,20 @@
                         <!-- Form Tambahan -->
                         <div class="form-section mt-3">
                             <label>Status Kehadiran</label>
-                            <select class="form-select form-select-sm" id="statusKehadiranSelect">
+                            <select class="form-select form-select-sm" id="statusKehadiranSelect" onchange="toggleIzinUpload()">
                                 <option value="Hadir">Hadir</option>
                                 <option value="Izin">Izin</option>
                                 <option value="Tidak Berangkat">Tidak Berangkat</option>
                                 <option value="Sakit">Sakit</option>
                             </select>
                             
+                            <!-- Upload Surat (hanya muncul jika status 'Izin') -->
+                            <div id="izinUploadContainer" style="display:none; margin-top:10px;">
+                                <label class="small fw-semibold">Upload Bukti Surat (max 50KB)</label>
+                                <input type="file" accept="image/*" class="form-control form-control-sm" id="izinBuktiSurat">
+                                <small class="text-muted">Format: JPG, PNG. Maksimal 50KB.</small>
+                            </div>
+
                             <label class="mt-2 small">Puasa (Senin/Kamis)</label>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="puasa" id="puasaYa" value="Ya" checked>
@@ -641,10 +638,21 @@
     }
     window.renderScanQR = renderScanQR;
 
+    // ============================================================
+    //  UPDATE SESI DISPLAY – DENGAN GUARD CHECK
+    // ============================================================
     function updateSesiDisplay() {
+        // Guard check: pastikan elemen DOM ada
+        const timeEl = document.getElementById('currentTime');
+        const sessionNameEl = document.getElementById('currentSessionName');
+        const sessionBadgeEl = document.getElementById('currentSessionBadge');
+        
+        // Jika elemen tidak ada, jangan lakukan apa-apa
+        if (!timeEl || !sessionNameEl || !sessionBadgeEl) return;
+
         const now = new Date();
         const currentTime = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
-        document.getElementById('currentTime').textContent = currentTime;
+        timeEl.textContent = currentTime;
 
         const currentMinutes = now.getHours() * 60 + now.getMinutes();
         let found = null;
@@ -659,14 +667,33 @@
             }
         }
         if (found) {
-            document.getElementById('currentSessionName').textContent = `[${found.agama}] ${found.nama}`;
-            document.getElementById('currentSessionBadge').className = 'badge-sesi badge-active';
+            sessionNameEl.textContent = `[${found.agama}] ${found.nama}`;
+            sessionBadgeEl.className = 'badge-sesi badge-active';
         } else {
-            document.getElementById('currentSessionName').textContent = 'Di luar sesi';
-            document.getElementById('currentSessionBadge').className = 'badge-sesi badge-outside';
+            sessionNameEl.textContent = 'Di luar sesi';
+            sessionBadgeEl.className = 'badge-sesi badge-outside';
         }
     }
 
+    // ============================================================
+    //  TOGGLE UPLOAD SURAT – JIKA STATUS 'IZIN'
+    // ============================================================
+    function toggleIzinUpload() {
+        const status = document.getElementById('statusKehadiranSelect')?.value || '';
+        const container = document.getElementById('izinUploadContainer');
+        if (!container) return;
+        if (status === 'Izin') {
+            container.style.display = 'block';
+        } else {
+            container.style.display = 'none';
+            const fileInput = document.getElementById('izinBuktiSurat');
+            if (fileInput) fileInput.value = '';
+        }
+    }
+
+    // ============================================================
+    //  START SCAN
+    // ============================================================
     async function startScan() {
         if (isScanning) return;
         unlockAudio();
@@ -757,25 +784,48 @@
     }
     window.resetScan = resetScan;
 
+    // ============================================================
+    //  CONFIRM ABSENSI + INTEGRASI IZIN
+    // ============================================================
     async function confirmAbsensi() {
         if (!currentScanData) return;
         const btn = document.getElementById('btnConfirm');
         btn.disabled = true;
         btn.innerHTML = 'Mencatat...';
 
-        const statusKehadiran = document.getElementById('statusKehadiranSelect').value;
+        const statusKehadiran = document.getElementById('statusKehadiranSelect')?.value || 'Hadir';
         const puasa = document.querySelector('input[name="puasa"]:checked')?.value || 'Tidak';
-        const pelanggaran = document.getElementById('pelanggaranSelect').value;
-        const pelanggaranKeterangan = document.getElementById('pelanggaranKeteranganContainer').style.display === 'block'
-            ? document.getElementById('pelanggaranKeterangan').value.trim()
+        const pelanggaran = document.getElementById('pelanggaranSelect')?.value || 'Tidak Ada';
+        const pelanggaranKeterangan = document.getElementById('pelanggaranKeteranganContainer')?.style.display === 'block'
+            ? document.getElementById('pelanggaranKeterangan')?.value.trim() || ''
             : '';
         const kondisiKesehatan = document.querySelector('input[name="kesehatan"]:checked')?.value || 'Sehat';
-        const keteranganKesehatan = document.getElementById('kesehatanKeteranganContainer').style.display === 'block'
-            ? document.getElementById('kesehatanKeterangan').value.trim()
+        const keteranganKesehatan = document.getElementById('kesehatanKeteranganContainer')?.style.display === 'block'
+            ? document.getElementById('kesehatanKeterangan')?.value.trim() || ''
             : '';
 
+        // Jika status Izin, upload bukti surat
+        let buktiSurat = '';
+        if (statusKehadiran === 'Izin') {
+            const fileInput = document.getElementById('izinBuktiSurat');
+            if (fileInput?.files?.length > 0) {
+                if (fileInput.files[0].size > 50000) {
+                    window.showToast('Ukuran file maksimal 50KB.', 'error');
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-check-circle me-1"></i> Konfirmasi Absensi';
+                    return;
+                }
+                buktiSurat = await new Promise(resolve => {
+                    const reader = new FileReader();
+                    reader.onload = e => resolve(e.target.result);
+                    reader.readAsDataURL(fileInput.files[0]);
+                });
+            }
+        }
+
         try {
-            const hasil = await API.recordAbsensi(
+            // 1. Catat absensi dengan status yang dipilih
+            const hasilAbsensi = await API.recordAbsensi(
                 currentScanData.code,
                 currentScanData.nama,
                 currentScanData.sesi,
@@ -789,16 +839,30 @@
                 keteranganKesehatan,
                 statusKehadiran
             );
-            if (hasil.status === 'recorded') {
+
+            // 2. Jika status Izin dan ada bukti surat, simpan ke menu Izin
+            if (statusKehadiran === 'Izin' && buktiSurat) {
+                const dataIzin = {
+                    kode_peserta: currentScanData.code,
+                    nama_peserta: currentScanData.nama,
+                    tanggal: new Date().toISOString().split('T')[0],
+                    keterangan: 'Izin via scan QR',
+                    petugas: user?.nama || 'Unknown',
+                    bukti_surat: buktiSurat
+                };
+                await API.addIzin(dataIzin);
+            }
+
+            if (hasilAbsensi.status === 'recorded') {
                 addLocalLog('recorded');
                 resetScan();
-                window.showToast('✅ Tercatat', 'success');
-            } else if (hasil.status === 'already_recorded') {
+                window.showToast('✅ Tercatat (Izin + surat jika ada)', 'success');
+            } else if (hasilAbsensi.status === 'already_recorded') {
                 addLocalLog('duplicate');
                 resetScan();
-                window.showToast('⚠️ Sudah tercatat', 'warning');
+                window.showToast('⚠️ Sudah tercatat sebelumnya', 'warning');
             } else {
-                window.showToast(hasil.message, 'error');
+                window.showToast(hasilAbsensi.message, 'error');
             }
         } catch(e) {
             window.showToast('Gagal server', 'error');
@@ -808,7 +872,11 @@
     }
     window.confirmAbsensi = confirmAbsensi;
 
+    // ============================================================
+    //  LOG ABSENSI
+    // ============================================================
     function addLocalLog(status) {
+        if (!currentScanData) return;
         localLog.unshift({
             nama: currentScanData.nama,
             kode: currentScanData.code,
@@ -1373,7 +1441,7 @@
     window.lihatBuktiIzinPetugas = lihatBuktiIzinPetugas;
 
     // ============================================================
-    //  BAGIAN 6: JADWAL_PETUGAS.JS (Collapsible Filter)
+    //  BAGIAN 6: JADWAL_PETUGAS.JS (Simple, Informatif, Responsif)
     // ============================================================
 
     let jadwalData = [];
@@ -1410,11 +1478,77 @@
                     </div>
                 </div>
             </div>
-            <div id="jadwalListContainerPetugas"></div>
+            <div id="jadwalSimpleContainer"></div>
         `;
-        renderJadwalContentPetugas();
+        renderJadwalSimple();
     }
     window.renderJadwalPetugas = renderJadwalPetugas;
+
+    function renderJadwalSimple() {
+        const container = document.getElementById('jadwalSimpleContainer');
+        if (!container) return;
+
+        const filtered = jadwalFiltered;
+        if (!filtered.length) {
+            container.innerHTML = '<div class="text-center py-5 text-muted">Belum ada jadwal.</div>';
+            return;
+        }
+
+        // Urutkan berdasarkan jam mulai
+        const sorted = [...filtered].sort((a, b) => a.mulai.localeCompare(b.mulai));
+
+        // Kelompokkan berdasarkan agama
+        const grouped = {};
+        sorted.forEach(j => {
+            if (!grouped[j.agama]) grouped[j.agama] = [];
+            grouped[j.agama].push(j);
+        });
+
+        // Mapping badge CSS untuk agama
+        const badgeClass = {
+            'Islam': 'badge-islam',
+            'Kristen': 'badge-kristen',
+            'Katolik': 'badge-katolik',
+            'Hindu': 'badge-hindu',
+            'Buddha': 'badge-buddha',
+            'Penghayat': 'badge-penghayat'
+        };
+
+        let html = `<div class="schedule-container">`;
+        for (const [agama, items] of Object.entries(grouped)) {
+            html += `
+                <div class="schedule-group" style="border-left-color: ${items[0].color || '#0d6efd'};">
+                    <div class="schedule-group-title">
+                        <i class="fas fa-users" style="color:${items[0].color || '#0d6efd'};"></i>
+                        ${agama} <span class="badge bg-secondary rounded-pill ms-1">${items.length}</span>
+                    </div>
+                    ${items.map(j => `
+                        <div class="schedule-item">
+                            <span class="schedule-time">${j.mulai}</span>
+                            <span class="schedule-name">${j.nama}</span>
+                            <span class="schedule-duration">${j.mulai} - ${j.selesai}</span>
+                            <span class="schedule-badge ${badgeClass[j.agama] || 'badge-islam'}">${j.agama}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+        html += `</div>`;
+        container.innerHTML = html;
+    }
+
+    function changeFilterAgamaJadwalPetugas(agama) {
+        jadwalFiltered = agama ? jadwalData.filter(j => j.agama === agama) : jadwalData;
+        renderJadwalSimple();
+    }
+    window.changeFilterAgamaJadwalPetugas = changeFilterAgamaJadwalPetugas;
+
+    function resetFilterJadwalPetugas() {
+        document.getElementById('filterAgamaJadwalPetugas').value = '';
+        jadwalFiltered = jadwalData;
+        renderJadwalSimple();
+    }
+    window.resetFilterJadwalPetugas = resetFilterJadwalPetugas;
 
     async function refreshJadwalPetugas(silent = false) {
         if (!silent) showToast('Memperbarui jadwal...', 'info');
@@ -1426,7 +1560,7 @@
                 const cached = getCachedData() || {};
                 cached.jadwal = jadwalData;
                 setCachedData(cached);
-                renderJadwalContentPetugas();
+                renderJadwalSimple();
                 if (!silent) showToast('✅ Jadwal diperbarui.', 'success');
             } else {
                 if (!silent) showToast('❌ Gagal memuat jadwal.', 'error');
@@ -1437,52 +1571,7 @@
     }
     window.refreshJadwalPetugas = refreshJadwalPetugas;
 
-    function renderJadwalContentPetugas() {
-        const filtered = jadwalFiltered;
-        if (!filtered.length) {
-            document.getElementById('jadwalListContainerPetugas').innerHTML = '<div class="text-center py-5 text-muted">Belum ada jadwal.</div>';
-            return;
-        }
-        const grouped = {};
-        filtered.forEach(j => { if (!grouped[j.agama]) grouped[j.agama] = []; grouped[j.agama].push(j); });
-        let listHtml = '';
-        for (const [agama, items] of Object.entries(grouped)) {
-            listHtml += `<div class="mb-4"><h5 class="fw-bold mb-2"><i class="fas fa-users me-2" style="color:#0d6efd;"></i>${agama} <span class="badge bg-secondary rounded-pill">${items.length}</span></h5><div class="row g-2">`;
-            items.forEach(j => {
-                const realIdx = jadwalData.indexOf(j);
-                listHtml += `
-                    <div class="col-md-6 col-lg-4">
-                        <div class="card-modern p-3" style="border-left:4px solid ${j.color||'#0d6efd'};">
-                            <div class="d-flex align-items-center gap-3">
-                                <div style="width:40px;height:40px;border-radius:10px;background:${j.bg||'#f0f0f0'};color:${j.color||'#333'};display:flex;align-items:center;justify-content:center;font-size:1.1rem;"><i class="fas ${j.icon||'fa-circle'}"></i></div>
-                                <div class="flex-grow-1"><strong class="small">${j.nama}</strong><div><small class="text-muted">${j.mulai} - ${j.selesai}</small></div></div>
-                                <div class="d-flex gap-1 flex-shrink-0">
-                                    <button class="btn btn-sm btn-outline-warning p-1" onclick="editJadwalPetugas(${realIdx})" title="Edit"><i class="fas fa-edit"></i></button>
-                                    <button class="btn btn-sm btn-outline-danger p-1" onclick="deleteJadwalPetugas(${realIdx})" title="Hapus"><i class="fas fa-trash-alt"></i></button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>`;
-            });
-            listHtml += `</div></div>`;
-        }
-        document.getElementById('jadwalListContainerPetugas').innerHTML = listHtml;
-    }
-    window.renderJadwalContentPetugas = renderJadwalContentPetugas;
-
-    function changeFilterAgamaJadwalPetugas(agama) {
-        jadwalFiltered = agama ? jadwalData.filter(j => j.agama === agama) : jadwalData;
-        renderJadwalContentPetugas();
-    }
-    window.changeFilterAgamaJadwalPetugas = changeFilterAgamaJadwalPetugas;
-
-    function resetFilterJadwalPetugas() {
-        document.getElementById('filterAgamaJadwalPetugas').value = '';
-        jadwalFiltered = jadwalData;
-        renderJadwalContentPetugas();
-    }
-    window.resetFilterJadwalPetugas = resetFilterJadwalPetugas;
-
+    // Fungsi edit/delete untuk petugas (read-only)
     function editJadwalPetugas(index) {
         showToast('Anda tidak memiliki akses untuk mengedit jadwal.', 'warning');
     }
@@ -2212,6 +2301,6 @@
     window.downloadLaporanPDFPetugas = downloadLaporanPDFPetugas;
     window.closePreviewLaporanPetugas = closePreviewLaporanPetugas;
 
-    console.log('✅ All Petugas modules loaded successfully (v5.3 – Robust Init)');
+    console.log('✅ All Petugas modules loaded successfully (v6.2 – Fix updateSesiDisplay, Robust Init)');
 
 })();

@@ -411,6 +411,91 @@
             from { width: 100%; }
             to { width: 0%; }
         }
+        /* ===== SIMPLE JADWAL ===== */
+        .schedule-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .schedule-group {
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            padding: 16px;
+            border-left: 4px solid var(--primary);
+        }
+        .schedule-group-title {
+            font-weight: 700;
+            font-size: 1rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .schedule-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #f1f5f9;
+            gap: 12px;
+        }
+        .schedule-item:last-child {
+            border-bottom: none;
+        }
+        .schedule-time {
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: var(--primary);
+            min-width: 60px;
+        }
+        .schedule-name {
+            flex: 1;
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: #1e293b;
+        }
+        .schedule-duration {
+            font-size: 0.75rem;
+            color: #64748b;
+            white-space: nowrap;
+        }
+        .schedule-badge {
+            padding: 2px 10px;
+            border-radius: 50px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .badge-islam { background: #d1fae5; color: #065f46; }
+        .badge-kristen { background: #dbeafe; color: #1e40af; }
+        .badge-katolik { background: #ede9fe; color: #5b21b6; }
+        .badge-hindu { background: #fef3c7; color: #92400e; }
+        .badge-buddha { background: #fce4ec; color: #c62828; }
+        .badge-penghayat { background: #d1fae5; color: #065f46; }
+
+        /* Responsive mobile */
+        @media (max-width: 480px) {
+            .schedule-item {
+                flex-wrap: wrap;
+                gap: 4px;
+            }
+            .schedule-time {
+                min-width: 45px;
+                font-size: 0.75rem;
+            }
+            .schedule-name {
+                font-size: 0.8rem;
+                width: 100%;
+                order: 3;
+            }
+            .schedule-duration {
+                font-size: 0.65rem;
+            }
+            .schedule-badge {
+                font-size: 0.55rem;
+                padding: 1px 8px;
+            }
+        }
         /* Bottom sheet animation */
         @keyframes slideUp {
             from { opacity: 0; transform: translateY(30px); }
@@ -507,7 +592,7 @@
 
 <!-- ===== MAIN CONTENT ===== -->
 <div class="main-content" id="mainContent">
-    <!-- Kosong, akan diisi oleh renderDashboardPetugas -->
+    <!-- Akan diisi otomatis oleh renderDashboardPetugas -->
 </div>
 
 <!-- ===== TOAST CONTAINER ===== -->
