@@ -1,6 +1,7 @@
 // ============================================
 // auth.js - Modul Otentikasi Petugas
 // SRMA 19 Bantul
+// Versi: 2.1 - Lengkap dengan preload & reset PIN
 // ============================================
 
 const Auth = (() => {

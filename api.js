@@ -1,6 +1,6 @@
 // ============================================
 // api.js - Modul Komunikasi Google Apps Script
-// SRMA 19 Bantul | Versi 15.0 (Lengkap: Semua Menu)
+// SRMA 19 Bantul | Versi 16.0 (Lengkap: Semua Menu)
 // ============================================
 
 const API = (() => {
@@ -77,7 +77,7 @@ const API = (() => {
     // Absensi
     searchPeserta: (code) => request('search', { code }),
 
-    // 🔥 recordAbsensi dengan parameter lengkap (status kehadiran, puasa, pelanggaran, kesehatan)
+    // recordAbsensi dengan parameter lengkap (status kehadiran, puasa, pelanggaran, kesehatan)
     recordAbsensi: (
       code, 
       nama, 
@@ -156,6 +156,9 @@ const API = (() => {
     addWaliAsuh: (data) => request('add_wali_asuh', data),
     updateWaliAsuh: (data) => request('update_wali_asuh', data),
     deleteWaliAsuh: (id) => request('delete_wali_asuh', { id }),
+
+    // Sinkronisasi jumlah murid wali asuh
+    syncWaliCount: () => request('sync_wali_count'),
 
     // Setup otomatis
     setup: () => request('setup')

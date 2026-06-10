@@ -125,13 +125,13 @@
     </div>
 
     <!-- ===== Scanner ===== -->
-    <div class="card-modern">
-        <div id="reader"></div>
+    <div class="card-modern p-3">
+        <div id="reader" style="width:100%;border-radius:10px;overflow:hidden;border:2px dashed #d0d0d0;background:#f8f8f8;min-height:220px;"></div>
         <div class="mt-3 text-center">
-            <button class="btn btn-primary btn-scan" id="btnStartScan" onclick="startScan()">
+            <button class="btn btn-primary rounded-pill" id="btnStartScan" onclick="startScan()">
                 <i class="fas fa-camera me-2"></i>Mulai Scan
             </button>
-            <button class="btn btn-danger btn-scan d-none" id="btnStopScan" onclick="stopScan()">
+            <button class="btn btn-danger rounded-pill d-none" id="btnStopScan" onclick="stopScan()">
                 <i class="fas fa-stop me-2"></i>Hentikan
             </button>
         </div>
@@ -139,7 +139,7 @@
 
     <!-- ===== Hasil Scan & Form ===== -->
     <div id="resultContainer" class="d-none mt-3">
-        <div class="card-modern">
+        <div class="card-modern p-3" id="resultCard">
             <h6 class="fw-bold mb-2"><i class="fas fa-info-circle me-2"></i>Data Peserta</h6>
             <div class="text-center">
                 <div id="resultAvatar" style="width:60px;height:60px;border-radius:50%;background:#e0f2fe;display:inline-flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:800;color:var(--primary);">?</div>
@@ -152,14 +152,21 @@
                 <!-- ===== Form Tambahan ===== -->
                 <div class="form-section mt-3">
                     <label>Status Kehadiran</label>
-                    <select class="form-select form-select-sm" id="statusKehadiranSelect">
+                    <select class="form-select form-select-sm" id="statusKehadiranSelect" onchange="toggleIzinUpload()">
                         <option value="Hadir">Hadir</option>
                         <option value="Izin">Izin</option>
                         <option value="Tidak Berangkat">Tidak Berangkat</option>
                         <option value="Sakit">Sakit</option>
                     </select>
                     
-                    <label class="mt-2 small">Puasa</label>
+                    <!-- Upload Surat (hanya muncul jika status 'Izin') -->
+                    <div id="izinUploadContainer" style="display:none; margin-top:10px;">
+                        <label class="small fw-semibold">Upload Bukti Surat (max 50KB)</label>
+                        <input type="file" accept="image/*" class="form-control form-control-sm" id="izinBuktiSurat">
+                        <small class="text-muted">Format: JPG, PNG. Maksimal 50KB.</small>
+                    </div>
+
+                    <label class="mt-2 small">Puasa (Senin/Kamis)</label>
                     <div class="form-check form-check-inline">
                         <input class="form-check-input" type="radio" name="puasa" id="puasaYa" value="Ya" checked>
                         <label class="form-check-label" for="puasaYa">Ya</label>
@@ -177,10 +184,10 @@
                         <option value="Berat">Berat</option>
                     </select>
                     <div id="pelanggaranKeteranganContainer" class="mt-1" style="display:none;">
-                        <input type="text" class="form-control form-control-sm" id="pelanggaranKeterangan" placeholder="Keterangan...">
+                        <input type="text" class="form-control form-control-sm" id="pelanggaranKeterangan" placeholder="Keterangan pelanggaran...">
                     </div>
 
-                    <label class="mt-2 small">Kesehatan</label>
+                    <label class="mt-2 small">Kondisi Kesehatan</label>
                     <div class="form-check form-check-inline">
                         <input class="form-check-input" type="radio" name="kesehatan" id="kesehatanSehat" value="Sehat" checked>
                         <label class="form-check-label" for="kesehatanSehat">Sehat</label>
@@ -190,7 +197,7 @@
                         <label class="form-check-label" for="kesehatanSakit">Sakit</label>
                     </div>
                     <div id="kesehatanKeteranganContainer" class="mt-1" style="display:none;">
-                        <input type="text" class="form-control form-control-sm" id="kesehatanKeterangan" placeholder="Keterangan...">
+                        <input type="text" class="form-control form-control-sm" id="kesehatanKeterangan" placeholder="Keterangan sakit...">
                     </div>
                 </div>
 
@@ -245,7 +252,7 @@
     let audioReady = false;
 
     // ============================================================
-    //  3. SOUND (sama seperti admin)
+    //  3. SOUND (BEEP)
     // ============================================================
     function initBeepAudio() {
         if (beepAudio) return;
@@ -371,24 +378,43 @@
     }
 
     // ============================================================
-    //  6. SCAN QR
+    //  6. Toggle Upload Surat jika status 'Izin'
+    // ============================================================
+    function toggleIzinUpload() {
+        const status = document.getElementById('statusKehadiranSelect').value;
+        const container = document.getElementById('izinUploadContainer');
+        if (status === 'Izin') {
+            container.style.display = 'block';
+        } else {
+            container.style.display = 'none';
+            document.getElementById('izinBuktiSurat').value = '';
+        }
+    }
+
+    // ============================================================
+    //  7. SCAN QR – OPTIMASI CEPAT, MIRING/TERBALIK
     // ============================================================
     async function startScan() {
         if (isScanning) return;
         unlockAudio();
         if (soundEnabled) playBeep();
         const reader = document.getElementById('reader');
-        reader.classList.add('scanning');
+        if (reader) reader.classList.add('scanning');
         try {
             html5QrCode = new Html5Qrcode('reader');
-            const config = { fps: 30, qrbox: { width: 280, height: 280 }, aspectRatio: 1.0 };
+            const config = { 
+                fps: 60, 
+                qrbox: { width: 500, height: 500 }, 
+                aspectRatio: 1.0 
+            };
             await html5QrCode.start({ facingMode: 'environment' }, config, onScanSuccess, () => {});
             isScanning = true;
             document.getElementById('btnStartScan').classList.add('d-none');
             document.getElementById('btnStopScan').classList.remove('d-none');
+            window.showToast('Kamera siap. Arahkan ke QR Code.', 'success');
         } catch (err) {
-            reader.classList.remove('scanning');
-            alert('Gagal mengakses kamera: ' + err.message);
+            if (reader) reader.classList.remove('scanning');
+            window.showToast('Gagal mengakses kamera.', 'error');
         }
     }
 
@@ -396,7 +422,8 @@
         if (!isScanning || !html5QrCode) return;
         await html5QrCode.stop();
         isScanning = false;
-        document.getElementById('reader').classList.remove('scanning');
+        const reader = document.getElementById('reader');
+        if (reader) reader.classList.remove('scanning');
         document.getElementById('btnStartScan').classList.remove('d-none');
         document.getElementById('btnStopScan').classList.add('d-none');
         html5QrCode.clear();
@@ -422,14 +449,16 @@
                     timestamp: new Date().toISOString()
                 };
                 displayResult();
-                setTimeout(() => { scanCooldown = false; }, 1500);
+                setTimeout(() => { scanCooldown = false; }, 800);
             } else {
-                alert(data.message || 'Peserta tidak ditemukan.');
-                setTimeout(() => { scanCooldown = false; }, 1500);
+                window.showToast(data.message || 'Peserta tidak ditemukan.', 'error');
+                resetScan();
+                setTimeout(() => { scanCooldown = false; }, 800);
             }
         }).catch(() => {
-            alert('Gagal menghubungi server.');
-            setTimeout(() => { scanCooldown = false; }, 1500);
+            window.showToast('Gagal menghubungi server.', 'error');
+            resetScan();
+            setTimeout(() => { scanCooldown = false; }, 800);
         });
     }
 
@@ -453,7 +482,7 @@
     }
 
     // ============================================================
-    //  7. KONFIRMASI ABSENSI
+    //  8. KONFIRMASI ABSENSI + INTEGRASI IZIN
     // ============================================================
     async function confirmAbsensi() {
         if (!currentScanData) return;
@@ -472,8 +501,28 @@
             ? document.getElementById('kesehatanKeterangan').value.trim()
             : '';
 
+        // Jika status Izin, upload bukti surat
+        let buktiSurat = '';
+        if (statusKehadiran === 'Izin') {
+            const fileInput = document.getElementById('izinBuktiSurat');
+            if (fileInput.files && fileInput.files[0]) {
+                if (fileInput.files[0].size > 50000) {
+                    window.showToast('Ukuran file maksimal 50KB.', 'error');
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-check-circle me-1"></i> Konfirmasi Absensi';
+                    return;
+                }
+                buktiSurat = await new Promise(resolve => {
+                    const reader = new FileReader();
+                    reader.onload = e => resolve(e.target.result);
+                    reader.readAsDataURL(fileInput.files[0]);
+                });
+            }
+        }
+
         try {
-            const hasil = await API.recordAbsensi(
+            // 1. Catat absensi dengan status yang dipilih
+            const hasilAbsensi = await API.recordAbsensi(
                 currentScanData.code,
                 currentScanData.nama,
                 currentScanData.sesi,
@@ -487,26 +536,40 @@
                 keteranganKesehatan,
                 statusKehadiran
             );
-            if (hasil.status === 'recorded') {
+
+            // 2. Jika status Izin dan ada bukti surat, simpan ke menu Izin
+            if (statusKehadiran === 'Izin' && buktiSurat) {
+                const dataIzin = {
+                    kode_peserta: currentScanData.code,
+                    nama_peserta: currentScanData.nama,
+                    tanggal: new Date().toISOString().split('T')[0],
+                    keterangan: 'Izin via scan QR',
+                    petugas: user?.nama || 'Unknown',
+                    bukti_surat: buktiSurat
+                };
+                await API.addIzin(dataIzin);
+            }
+
+            if (hasilAbsensi.status === 'recorded') {
                 addLocalLog('recorded');
                 resetScan();
-                alert('✅ Tercatat!');
-            } else if (hasil.status === 'already_recorded') {
+                window.showToast('✅ Tercatat (Izin + surat jika ada)', 'success');
+            } else if (hasilAbsensi.status === 'already_recorded') {
                 addLocalLog('duplicate');
                 resetScan();
-                alert('⚠️ Sudah tercatat sebelumnya.');
+                window.showToast('⚠️ Sudah tercatat sebelumnya', 'warning');
             } else {
-                alert(hasil.message);
+                window.showToast(hasilAbsensi.message, 'error');
             }
         } catch(e) {
-            alert('Gagal server.');
+            window.showToast('Gagal server', 'error');
         }
         btn.disabled = false;
         btn.innerHTML = '<i class="fas fa-check-circle me-1"></i> Konfirmasi Absensi';
     }
 
     // ============================================================
-    //  8. LOG
+    //  9. LOG ABSENSI
     // ============================================================
     function addLocalLog(status) {
         localLog.unshift({
@@ -537,6 +600,7 @@
 
     function renderLog() {
         const container = document.getElementById('logContainer');
+        if (!container) return;
         if (localLog.length) {
             container.innerHTML = localLog.map(l =>
                 `<div class="log-item"><span><i class="fas ${l.status==='duplicate'?'fa-exclamation-triangle text-warning':'fa-check-circle text-success'}"></i> ${l.nama}</span><span class="small text-muted">${l.sesi} | ${l.jam}</span></div>`
@@ -547,7 +611,7 @@
     }
 
     // ============================================================
-    //  9. KONEKSI
+    //  10. TEST KONEKSI
     // ============================================================
     async function testConnection() {
         try {
@@ -561,7 +625,7 @@
     }
 
     // ============================================================
-    //  10. INIT
+    //  11. INIT
     // ============================================================
     document.addEventListener('DOMContentLoaded', function() {
         fetchJadwal();

@@ -446,17 +446,11 @@
     }
 
     // ==================== PRELOAD SAAT LOAD HALAMAN (jika cache kosong) ====================
-    // Fungsi ini akan dijalankan jika user tiba-tiba refresh di halaman login dengan cache kosong
-    // Tapi tidak akan mengganggu proses login normal
     window.addEventListener('load', function() {
-        // Cek apakah ada cache admin atau petugas
         const adminCache = localStorage.getItem('srma19_admin_data');
         const petugasCache = localStorage.getItem('srma19_petugas_data');
-        // Jika tidak ada cache, preload data secara diam-diam (silent preload)
         if (!adminCache && !petugasCache) {
             console.log('Cache kosong, melakukan silent preload...');
-            // Ambil data peserta dll secara diam-diam
-            // Ini opsional, tidak mengganggu login
         }
     });
 </script>

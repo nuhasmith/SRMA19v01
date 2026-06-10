@@ -1,7 +1,7 @@
 // ============================================================
 //  ALL_MODULES.JS – Gabungan semua modul SPA Admin
 //  SRMA 19 Bantul
-//  Versi: 6.0 – QR scan tanpa iframe, semua menu berfungsi
+//  Versi: 9.0 – Wali Asrama, Bottom Nav Tanpa Scan QR, Filter Petugas
 // ============================================================
 
 (function() {
@@ -136,7 +136,7 @@
     }
     window.closeModal = closeModal;
 
-    // --- BOTTOM SHEET ---
+    // --- BOTTOM SHEET (mobile) ---
     function toggleBottomSheet() {
         const existing = document.querySelector('.bottom-sheet-overlay');
         if (existing) { existing.remove(); return; }
@@ -169,6 +169,16 @@
                 </button>
                 <button class="btn btn-outline-secondary w-100 text-start" onclick="navigate('absensi_qr');this.closest('.bottom-sheet-overlay').remove()">
                     <i class="fas fa-qrcode me-2"></i> Scan QR
+                </button>
+                <hr>
+                <button class="btn btn-outline-secondary w-100 text-start" onclick="window.location.href='profile.html'">
+                    <i class="fas fa-user-circle me-2"></i> Profil
+                </button>
+                <button class="btn btn-outline-secondary w-100 text-start" onclick="window.open('index.html', '_blank')">
+                    <i class="fas fa-globe me-2"></i> Website
+                </button>
+                <button class="btn btn-outline-danger w-100 text-start" onclick="handleLogout();this.closest('.bottom-sheet-overlay').remove()">
+                    <i class="fas fa-sign-out-alt me-2"></i> Logout
                 </button>
             </div>
         `;
@@ -415,17 +425,16 @@
                             <label class="mb-0" style="font-weight:600;font-size:0.85rem;">Tampilkan:</label>
                             <div class="form-check form-check-inline mb-0"><input class="form-check-input" type="checkbox" id="barcodeShowNama" checked><label class="form-check-label" for="barcodeShowNama">Nama</label></div>
                             <div class="form-check form-check-inline mb-0"><input class="form-check-input" type="checkbox" id="barcodeShowKode" checked><label class="form-check-label" for="barcodeShowKode">Kode</label></div>
-                            <div class="form-check form-check-inline mb-0"><input class="form-check-input" type="checkbox" id="barcodeShowWali1" checked><label class="form-check-label" for="barcodeShowWali1">Wali 1</label></div>
-                            <div class="form-check form-check-inline mb-0"><input class="form-check-input" type="checkbox" id="barcodeShowWali2" checked><label class="form-check-label" for="barcodeShowWali2">Wali 2</label></div>
+                            <div class="form-check form-check-inline mb-0"><input class="form-check-input" type="checkbox" id="barcodeShowWali1" checked><label class="form-check-label" for="barcodeShowWali1">Wali Asuh 1</label></div>
+                            <div class="form-check form-check-inline mb-0"><input class="form-check-input" type="checkbox" id="barcodeShowWali2" checked><label class="form-check-label" for="barcodeShowWali2">Wali Asrama</label></div>
                             <div class="form-check form-check-inline mb-0"><input class="form-check-input" type="checkbox" id="barcodeShowPublisher" checked><label class="form-check-label" for="barcodeShowPublisher">Penerbit</label></div>
+                            <div class="form-check form-check-inline mb-0"><input class="form-check-input" type="checkbox" id="barcodeShowHeader" checked><label class="form-check-label" for="barcodeShowHeader">Header Kartu</label></div>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="d-flex flex-wrap align-items-center gap-2">
-                            <label class="mb-0" style="font-weight:600;font-size:0.85rem;">Teks:</label>
+                            <label class="mb-0" style="font-weight:600;font-size:0.85rem;">Teks Penerbit:</label>
                             <input type="text" id="barcodePublisherText" value="Diterbitkan oleh SRMA 19 Bantul" style="width:160px;">
-                            <label class="mb-0" style="font-weight:600;font-size:0.85rem;">Kertas:</label>
-                            <select id="paperSizeSelect"><option value="b3">B3</option><option value="a4" selected>A4</option><option value="a5">A5</option><option value="f4">F4</option><option value="letter">Letter</option></select>
                             <button class="btn btn-sm btn-info rounded-pill" onclick="previewBarcode()"><i class="fas fa-eye me-1"></i> Preview & Download</button>
                         </div>
                     </div>
@@ -510,7 +519,7 @@
                             <th style="width:30px;"><input type="checkbox" ${allChecked?'checked':''} onchange="toggleSelectAllPeserta(this.checked)"></th>
                             <th>Nama</th><th>Kode</th><th>JK</th><th>Agama</th>
                             <th>Rombel</th><th>Status</th><th>Angkatan</th>
-                            <th>Wali Asuh 1</th><th>Wali Asuh 2</th>
+                            <th>Wali Asuh 1</th><th>Wali Asrama</th>
                             <th class="text-center">Aksi</th>
                         </tr>
                     </thead>
@@ -568,7 +577,7 @@
                     </div>
                     <div class="mb-3"><label>Keterangan (Status)</label><select class="form-select" id="pmKeterangan"><option value="Aktif" ${(existing?.Keterangan||'Aktif')==='Aktif'?'selected':''}>Aktif</option><option value="Nonaktif" ${existing?.Keterangan==='Nonaktif'?'selected':''}>Nonaktif</option><option value="Lulus" ${existing?.Keterangan==='Lulus'?'selected':''}>Lulus</option></select></div>
                     <div class="mb-3"><label>Wali Asuh 1</label><select class="form-select" id="pmWali1"><option value="">-- Pilih Wali Asuh --</option>${waliOptions}</select></div>
-                    <div class="mb-3"><label>Wali Asuh 2</label><select class="form-select" id="pmWali2"><option value="">-- Pilih Wali Asuh --</option>${waliOptions}</select></div>
+                    <div class="mb-3"><label>Wali Asrama</label><select class="form-select" id="pmWali2"><option value="">-- Pilih Wali Asuh --</option>${waliOptions}</select></div>
                     <div class="d-flex gap-2 justify-content-end mt-3">
                         <button class="btn btn-secondary rounded-pill px-4" onclick="closeModal()">Batal</button>
                         <button class="btn btn-primary rounded-pill px-4" onclick="savePeserta(${index})"><i class="fas fa-save me-1"></i> Simpan</button>
@@ -697,7 +706,7 @@
             showToast('Tidak ada data.', 'warning');
             return;
         }
-        const rows = [['Kode','Nama','JK','Agama','Asal','Rombel','Keterangan','Angkatan','Wali Asuh 1','Wali Asuh 2']];
+        const rows = [['Kode','Nama','JK','Agama','Asal','Rombel','Keterangan','Angkatan','Wali Asuh 1','Wali Asrama']];
         filtered.forEach(p => rows.push([String(p.Kode), p.Nama, p.Jenis_Kelamin||p.jk||'', p.Agama||'', p.Asal||'', p.Rombel||'', p.Keterangan||'Aktif', p.Angkatan||'', p.Wali_Asuh_1||'', p.Wali_Asuh_2||'']));
         const csv = rows.map(r=>r.join(',')).join('\n');
         const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' });
@@ -711,15 +720,26 @@
     window.exportCSVPeserta = exportCSVPeserta;
 
     function exportPesertaPDF() {
-        const filtered = pesertaFiltered.length ? pesertaFiltered : pesertaData;
-        if (!filtered.length) {
-            showToast('Tidak ada data.', 'warning');
+        let dataToExport = [];
+        let sourceLabel = '';
+
+        if (selectedKode.size > 0) {
+            dataToExport = pesertaData.filter(p => selectedKode.has(String(p.Kode)));
+            sourceLabel = `(${dataToExport.length} peserta dipilih)`;
+        } else {
+            dataToExport = pesertaFiltered.length ? pesertaFiltered : pesertaData;
+            sourceLabel = `(${dataToExport.length} peserta)`;
+        }
+
+        if (dataToExport.length === 0) {
+            showToast('Tidak ada data yang akan diekspor.', 'warning');
             return;
         }
+
         const now = new Date();
         const tanggalCetak = now.toLocaleDateString('id-ID', { year:'numeric', month:'long', day:'numeric' });
         let rows = '';
-        filtered.forEach((p, i) => {
+        dataToExport.forEach((p, i) => {
             rows += `<tr><td style="border:1px solid #d1d5db;padding:4px;">${i+1}</td><td style="border:1px solid #d1d5db;padding:4px;">${String(p.Kode)}</td><td style="border:1px solid #d1d5db;padding:4px;">${p.Nama||'-'}</td><td style="border:1px solid #d1d5db;padding:4px;">${p.Jenis_Kelamin||p.jk||'-'}</td><td style="border:1px solid #d1d5db;padding:4px;">${p.Agama||'-'}</td><td style="border:1px solid #d1d5db;padding:4px;">${p.Asal||'-'}</td><td style="border:1px solid #d1d5db;padding:4px;">${p.Rombel||'-'}</td><td style="border:1px solid #d1d5db;padding:4px;">${p.Keterangan||'Aktif'}</td><td style="border:1px solid #d1d5db;padding:4px;">${p.Angkatan||'-'}</td><td style="border:1px solid #d1d5db;padding:4px;">${p.Wali_Asuh_1||'-'}</td><td style="border:1px solid #d1d5db;padding:4px;">${p.Wali_Asuh_2||'-'}</td></tr>`;
         });
         const html = `
@@ -727,14 +747,14 @@
                 <div style="text-align:center;margin-bottom:20px;border-bottom:3px solid #0d6efd;padding-bottom:10px;">
                     <h3 style="color:#0d6efd;margin:0;font-size:18px;">SEKOLAH RAKYAT MENENGAH ATAS 19 BANTUL</h3>
                     <p style="margin:2px 0;font-size:11px;color:#475569;">Sentra Terpadu Prof. Dr. Soeharso, Sonosewu, Ngestiharjo, Kasihan, Bantul</p>
-                    <hr style="border:0;border-top:1px solid #e2e8f0;margin:8px 0;"><h4 style="margin:6px 0;font-size:16px;">DAFTAR PESERTA DIDIK</h4>
+                    <hr style="border:0;border-top:1px solid #e2e8f0;margin:8px 0;"><h4 style="margin:6px 0;font-size:16px;">DAFTAR PESERTA DIDIK ${sourceLabel}</h4>
                     <p style="font-size:11px;color:#6c757d;">Dicetak: ${tanggalCetak}</p>
                 </div>
                 <table style="width:100%;border-collapse:collapse;font-size:9px;font-family:'Inter',Arial,sans-serif;">
-                    <thead><tr style="background-color:#f8fafc;"><th style="border:1px solid #d1d5db;padding:4px;">No</th><th style="border:1px solid #d1d5db;padding:4px;">Kode</th><th style="border:1px solid #d1d5db;padding:4px;">Nama</th><th style="border:1px solid #d1d5db;padding:4px;">JK</th><th style="border:1px solid #d1d5db;padding:4px;">Agama</th><th style="border:1px solid #d1d5db;padding:4px;">Asal</th><th style="border:1px solid #d1d5db;padding:4px;">Rombel</th><th style="border:1px solid #d1d5db;padding:4px;">Status</th><th style="border:1px solid #d1d5db;padding:4px;">Angkatan</th><th style="border:1px solid #d1d5db;padding:4px;">Wali Asuh 1</th><th style="border:1px solid #d1d5db;padding:4px;">Wali Asuh 2</th></tr></thead>
+                    <thead><tr style="background-color:#f8fafc;"><th style="border:1px solid #d1d5db;padding:4px;">No</th><th style="border:1px solid #d1d5db;padding:4px;">Kode</th><th style="border:1px solid #d1d5db;padding:4px;">Nama</th><th style="border:1px solid #d1d5db;padding:4px;">JK</th><th style="border:1px solid #d1d5db;padding:4px;">Agama</th><th style="border:1px solid #d1d5db;padding:4px;">Asal</th><th style="border:1px solid #d1d5db;padding:4px;">Rombel</th><th style="border:1px solid #d1d5db;padding:4px;">Status</th><th style="border:1px solid #d1d5db;padding:4px;">Angkatan</th><th style="border:1px solid #d1d5db;padding:4px;">Wali Asuh 1</th><th style="border:1px solid #d1d5db;padding:4px;">Wali Asrama</th></tr></thead>
                     <tbody>${rows}</tbody>
                 </table>
-                <div style="margin-top:12px;font-size:9px;color:#6c757d;text-align:center;border-top:1px solid #e2e8f0;padding-top:8px;">Total: ${filtered.length} peserta</div>
+                <div style="margin-top:12px;font-size:9px;color:#6c757d;text-align:center;border-top:1px solid #e2e8f0;padding-top:8px;">Total: ${dataToExport.length} peserta</div>
             </div>`;
         const tempDiv = document.createElement('div');
         tempDiv.style.cssText = 'position:fixed;top:0;left:0;width:100%;background:#fff;padding:20px;opacity:0;pointer-events:none;z-index:-9999;';
@@ -795,21 +815,25 @@
     }
     window.arsipLulus = arsipLulus;
 
-    function generateQRImage(text, size) {
+    // ============================================================
+    //  15. QR CODE GENERATOR – RESOLUSI TINGGI (400 DPI)
+    // ============================================================
+    function generateQRImage(text, size_mm) {
         return new Promise((resolve) => {
-            const cacheKey = text + '_' + size;
+            const cacheKey = text + '_' + size_mm;
             if (qrImagesCache[cacheKey]) {
                 resolve(qrImagesCache[cacheKey]);
                 return;
             }
+            const pixelSize = Math.round(size_mm * 15.75);
             const container = document.createElement('div');
-            container.style.cssText = `position:fixed;top:0;left:-9999px;width:${size}px;height:${size}px;background:white;z-index:9999;`;
+            container.style.cssText = `position:fixed;top:0;left:-9999px;width:${pixelSize}px;height:${pixelSize}px;background:white;z-index:9999;`;
             document.body.appendChild(container);
             const qr = new QRCode(container, {
                 text: text,
-                width: size,
-                height: size,
-                colorDark: "#0d6efd",
+                width: pixelSize,
+                height: pixelSize,
+                colorDark: "#000000",
                 colorLight: "#ffffff",
                 correctLevel: QRCode.CorrectLevel.H
             });
@@ -828,6 +852,9 @@
         });
     }
 
+    // ============================================================
+    //  16. BARCODE PREVIEW & DOWNLOAD (UKURAN KTP + QR BESAR)
+    // ============================================================
     async function previewBarcode() {
         if (isGenerating) return;
         isGenerating = true;
@@ -847,19 +874,17 @@
         const showWali1 = document.getElementById('barcodeShowWali1')?.checked ?? true;
         const showWali2 = document.getElementById('barcodeShowWali2')?.checked ?? true;
         const showPublisher = document.getElementById('barcodeShowPublisher')?.checked ?? true;
+        const showHeader = document.getElementById('barcodeShowHeader')?.checked ?? true;
         const publisherText = document.getElementById('barcodePublisherText')?.value || 'Diterbitkan oleh SRMA 19 Bantul';
-        const paperSize = document.getElementById('paperSizeSelect').value;
+        
         const cardWidth = 85.6;
         const cardHeight = 53.98;
         const cardMargin = 4;
-        let pdfFormat = 'a4';
-        let pdfOrientation = 'landscape';
-        if (paperSize === 'b3') {
-            pdfFormat = 'b3';
-            pdfOrientation = 'landscape';
-        }
-        const qrSize = Math.floor(cardWidth * 0.55);
-        showToast('Menyiapkan preview kartu...', 'info');
+        const qrSize = Math.floor(cardWidth * 0.80);
+        const pdfFormat = 'a4';
+        const pdfOrientation = 'landscape';
+
+        showToast('Menyiapkan preview kartu dengan QR resolusi 400 DPI...', 'info');
         const oldPreview = document.getElementById('barcodePreviewModal');
         if (oldPreview) oldPreview.remove();
         const container = document.createElement('div');
@@ -889,20 +914,28 @@
                     for (let j = 0; j < currentRow.length; j++) {
                         const p = currentRow[j];
                         let infoHtml = '';
-                        if (showNama) infoHtml += `<div style="font-size:${Math.floor(cardHeight/18)}mm;font-weight:800;color:#1e293b;margin-top:${Math.floor(cardHeight/20)}mm;">${p.Nama || '-'}</div>`;
-                        if (showKode) infoHtml += `<div style="font-size:${Math.floor(cardHeight/24)}mm;color:#475569;margin-top:${Math.floor(cardHeight/30)}mm;">Kode: <span style="font-weight:700;color:#0d6efd;">${p.Kode || ''}</span></div>`;
-                        if (showWali1 && p.Wali_Asuh_1) infoHtml += `<div style="font-size:${Math.floor(cardHeight/24)}mm;color:#475569;margin-top:${Math.floor(cardHeight/30)}mm;">Wali 1: ${p.Wali_Asuh_1}</div>`;
-                        if (showWali2 && p.Wali_Asuh_2) infoHtml += `<div style="font-size:${Math.floor(cardHeight/24)}mm;color:#475569;margin-top:${Math.floor(cardHeight/30)}mm;">Wali 2: ${p.Wali_Asuh_2}</div>`;
-                        if (showPublisher) infoHtml += `<div style="font-size:${Math.floor(cardHeight/30)}mm;color:#64748b;margin-top:${Math.floor(cardHeight/20)}mm;border-top:1px solid #e2e8f0;padding-top:${Math.floor(cardHeight/20)}mm;">${publisherText}</div>`;
-                        const cardHtml = `
-                            <div style="border:2px solid #94a3b8;border-radius:0;padding:${Math.floor(cardHeight/15)}mm;width:${cardWidth}mm;min-height:${cardHeight}mm;text-align:center;background:#ffffff;box-shadow:0 4px 12px rgba(0,0,0,0.06);display:flex;flex-direction:column;justify-content:space-between;">
-                                <div>
-                                    <div style="background:linear-gradient(135deg, #0d6efd 0%, #1e40af 100%);border-radius:0;padding:${Math.floor(cardHeight/30)}mm;margin-bottom:${Math.floor(cardHeight/20)}mm;">
-                                        <div style="display:flex;align-items:center;justify-content:center;gap:8px;">
-                                            <span style="color:#fff;font-size:${Math.floor(cardHeight/20)}mm;font-weight:700;letter-spacing:1px;">SRMA 19 BANTUL</span>
-                                        </div>
+                        if (showNama) infoHtml += `<div style="font-size:10pt;font-weight:800;color:#1e293b;margin-top:1.5mm;">${p.Nama || '-'}</div>`;
+                        if (showKode) infoHtml += `<div style="font-size:8pt;color:#475569;margin-top:0.5mm;">Kode: <span style="font-weight:700;color:#0d6efd;">${p.Kode || ''}</span></div>`;
+                        if (showWali1 && p.Wali_Asuh_1) infoHtml += `<div style="font-size:6pt;color:#475569;margin-top:0.5mm;">Wali 1: ${p.Wali_Asuh_1}</div>`;
+                        if (showWali2 && p.Wali_Asuh_2) infoHtml += `<div style="font-size:6pt;color:#475569;margin-top:0.5mm;">Wali 2: ${p.Wali_Asuh_2}</div>`;
+                        if (showPublisher) infoHtml += `<div style="font-size:5pt;color:#64748b;margin-top:0.5mm;border-top:1px solid #e2e8f0;padding-top:0.5mm;">${publisherText}</div>`;
+                        
+                        let headerHtml = '';
+                        if (showHeader) {
+                            headerHtml = `
+                                <div style="background:linear-gradient(135deg, #0d6efd 0%, #1e40af 100%);border-radius:3px;padding:3px;margin-bottom:3px;">
+                                    <div style="display:flex;align-items:center;justify-content:center;gap:6px;">
+                                        <span style="color:#fff;font-size:9pt;font-weight:700;letter-spacing:1px;">SRMA 19 BANTUL</span>
                                     </div>
-                                    <img src="${rowQrImages[j]}" style="width:${qrSize}mm;height:${qrSize}mm;display:inline-block;background:#fff;padding:${Math.floor(cardHeight/30)}mm;border-radius:0;box-shadow:0 2px 8px rgba(0,0,0,0.04);" />
+                                </div>
+                            `;
+                        }
+                        
+                        const cardHtml = `
+                            <div style="border:2px solid #94a3b8;border-radius:4px;padding:${cardMargin}mm;width:${cardWidth}mm;min-height:${cardHeight}mm;text-align:center;background:#ffffff;box-shadow:0 4px 12px rgba(0,0,0,0.06);display:flex;flex-direction:column;justify-content:space-between;">
+                                <div>
+                                    ${headerHtml}
+                                    <img src="${rowQrImages[j]}" style="width:${qrSize}mm;height:${qrSize}mm;display:inline-block;background:#fff;padding:2px;border-radius:4px;box-shadow:0 2px 8px rgba(0,0,0,0.04);" />
                                     ${infoHtml}
                                 </div>
                             </div>`;
@@ -924,8 +957,8 @@
             showWali1,
             showWali2,
             showPublisher,
+            showHeader,
             publisherText,
-            paperSize,
             pdfFormat,
             pdfOrientation,
             container,
@@ -947,7 +980,7 @@
             </div>`;
         document.body.insertAdjacentHTML('beforeend', previewHtml);
         document.body.removeChild(container);
-        showToast('Preview siap. Periksa kartu, lalu klik Download.', 'success');
+        showToast('✅ Preview siap. QR Code dicetak dengan resolusi 400 DPI dan ukuran 68.5mm.', 'success');
         isGenerating = false;
     }
     window.previewBarcode = previewBarcode;
@@ -974,7 +1007,7 @@
             showToast('Elemen preview tidak ditemukan.', 'error');
             return;
         }
-        showToast('Mengunduh PDF dari preview...', 'info');
+        showToast('Mengunduh PDF dengan QR resolusi 400 DPI...', 'info');
         const originalStyle = {
             opacity: previewContainer.style.opacity,
             zIndex: previewContainer.style.zIndex,
@@ -1001,7 +1034,7 @@
         previewContainer.style.overflow = 'visible';
         await new Promise(resolve => setTimeout(resolve, 500));
         const namaSiswa = previewData.targetPeserta.length === 1 ? previewData.targetPeserta[0].Nama.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '') : 'multiple';
-        const filename = `kartu_murid_${namaSiswa}_${previewData.paperSize}_${new Date().toISOString().slice(0,10)}.pdf`;
+        const filename = `kartu_murid_${namaSiswa}_${new Date().toISOString().slice(0,10)}.pdf`;
         try {
             await html2pdf().set({
                 filename: filename,
@@ -1011,7 +1044,7 @@
                 jsPDF: { unit: 'mm', format: previewData.pdfFormat, orientation: previewData.pdfOrientation }
             }).from(previewContainer).save();
             closePreviewBarcode();
-            showToast('PDF berhasil diunduh!', 'success');
+            showToast('✅ PDF berhasil diunduh!', 'success');
         } catch (e) {
             showToast('Gagal mengunduh PDF: ' + e.message, 'error');
             console.error('PDF Error:', e);
@@ -2770,7 +2803,7 @@
                         <tr>
                             <th>No</th><th>Kode</th><th>Nama</th><th>Agama</th><th>Rombel</th>
                             <th>Hadir</th><th>Izin</th><th>Tidak Berangkat</th><th>Sakit</th><th>% Hadir</th>
-                            <th>Wali Asuh 1</th><th>Wali Asuh 2</th>
+                            <th>Wali Asuh 1</th><th>Wali Asrama</th>
                         </tr>
                     </thead>
                     <tbody>${rows}</tbody>
@@ -2922,7 +2955,6 @@
             </div>
         `;
 
-        // Inisialisasi scanner (tampilkan instruksi)
         const reader = document.getElementById('reader');
         if (reader) reader.innerHTML = '<div class="text-center py-4 text-muted">Klik "Mulai Scan" untuk mengaktifkan kamera</div>';
     }
@@ -3039,6 +3071,6 @@
         }
     }, 30000);
 
-    console.log('✅ All modules loaded successfully');
+    console.log('✅ All modules loaded successfully (v9.0)');
 
 })();

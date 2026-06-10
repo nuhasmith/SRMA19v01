@@ -193,7 +193,7 @@
             box-shadow: -2px 2px 8px rgba(0,0,0,0.08);
             padding: 4px 4px 4px 8px;
             transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            transform: translateX(calc(100% - 40px)); /* Closed: only toggle arrow visible */
+            transform: translateX(calc(100% - 40px));
             gap: 4px;
         }
         .mobile-scan-slider.open {
@@ -238,7 +238,10 @@
             background: var(--primary-dark);
             transform: scale(1.05);
         }
-        /* ===== MOBILE BOTTOM NAV ===== */
+        .mobile-scan-slider .slider-scan-btn.hidden {
+            display: none;
+        }
+        /* ===== MOBILE BOTTOM NAV (5 MENU: Dashboard, Absensi, Jadwal, Izin, Lainnya) ===== */
         .bottom-nav {
             display: none;
             position: fixed;
@@ -408,76 +411,6 @@
             from { width: 100%; }
             to { width: 0%; }
         }
-        .barcode-panel {
-            background: #f8fafc; border-radius: 12px; padding: 16px; margin-top: 12px;
-        }
-        .barcode-panel .form-check { margin-right: 12px; font-size: 0.85rem; }
-        .barcode-panel input[type="text"] {
-            border-radius: 50px; border: 1px solid #e2e8f0; padding: 4px 12px; font-size: 0.8rem; width: 160px;
-        }
-        .barcode-panel select {
-            border-radius: 50px; border: 1px solid #e2e8f0; padding: 4px 12px; font-size: 0.8rem;
-        }
-        .preview-modal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 9999;
-            padding: 20px; overflow-y: auto;
-        }
-        .preview-modal.show { display: flex; align-items: center; justify-content: center; }
-        .preview-content {
-            background: #fff; border-radius: 20px; padding: 24px;
-            max-width: 95%; max-height: 90vh; overflow-y: auto;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-        }
-        .preview-content .preview-header {
-            display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 2px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 16px;
-        }
-        .preview-content .preview-header h4 { font-weight: 700; margin: 0; }
-        .preview-content .preview-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-        /* ===== RESPONSIVE ===== */
-        @media (max-width: 768px) {
-            .sidebar { display: none; }
-            .main-content { margin-left: 0 !important; padding: 16px 12px 80px 12px; }
-            .bottom-nav { display: flex; }
-            .mobile-header-actions { display: flex; }
-            .mobile-scan-slider { display: flex; }
-            .filter-group input, .filter-group select { width: 100%; flex: 1 1 100%; }
-            .barcode-panel .row { flex-direction: column; gap: 8px; }
-            .barcode-panel input[type="text"] { width: 100%; }
-            .modal-box { padding: 20px 16px; }
-            .toast-container { top: 12px; right: 12px; left: 12px; max-width: none; }
-            .stat-grid { grid-template-columns: repeat(2, 1fr); }
-            .table-card table { font-size: 0.75rem; }
-            .table-card table th, .table-card table td { padding: 6px 8px; }
-        }
-        @media (min-width: 769px) and (max-width: 1200px) {
-            .filter-group input, .filter-group select { flex: 1 1 120px; }
-        }
-        /* Tambahan CSS untuk card-modern */
-        .card-modern {
-            background: #fff;
-            border-radius: 14px;
-            box-shadow: var(--card-shadow);
-            padding: 16px 20px;
-            margin-bottom: 16px;
-        }
-        .card-modern.p-0 {
-            padding: 0;
-        }
-        .btn-refresh {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            color: #475569;
-            border-radius: 50px;
-            padding: 4px 14px;
-            font-size: 0.85rem;
-            transition: all 0.2s;
-        }
-        .btn-refresh:hover {
-            background: #e2e8f0;
-            color: #1e293b;
-        }
         /* Bottom sheet animation */
         @keyframes slideUp {
             from { opacity: 0; transform: translateY(30px); }
@@ -553,13 +486,19 @@
     </div>
 </div>
 
-<!-- ===== MOBILE BOTTOM NAV ===== -->
+<!-- ===== MOBILE BOTTOM NAV (5 MENU: Dashboard, Absensi, Jadwal, Izin, Lainnya) ===== -->
 <div class="bottom-nav" id="bottomNav">
     <a class="bottom-item" data-page="dashboard" onclick="navigate('dashboard')">
         <i class="fas fa-home"></i><span>Dashboard</span>
     </a>
-    <a class="bottom-item" data-page="scan" onclick="navigate('scan')">
-        <i class="fas fa-qrcode"></i><span>Scan QR</span>
+    <a class="bottom-item" data-page="absensi" onclick="navigate('absensi')">
+        <i class="fas fa-clipboard-list"></i><span>Absensi</span>
+    </a>
+    <a class="bottom-item" data-page="jadwal" onclick="navigate('jadwal')">
+        <i class="fas fa-calendar-alt"></i><span>Jadwal</span>
+    </a>
+    <a class="bottom-item" data-page="izin" onclick="navigate('izin')">
+        <i class="fas fa-file-medical-alt"></i><span>Izin</span>
     </a>
     <button class="bottom-item" onclick="toggleBottomSheet()">
         <i class="fas fa-ellipsis-h"></i><span>Lainnya</span>
@@ -568,10 +507,7 @@
 
 <!-- ===== MAIN CONTENT ===== -->
 <div class="main-content" id="mainContent">
-    <div class="text-center py-5">
-        <div class="spinner-border text-primary" role="status"></div>
-        <p class="text-muted mt-2">Memuat dashboard...</p>
-    </div>
+    <!-- Kosong, akan diisi oleh renderDashboardPetugas -->
 </div>
 
 <!-- ===== TOAST CONTAINER ===== -->
@@ -587,8 +523,7 @@
 <script>
     // ============================================================
     //  BOTTOM SHEET "LAINNYA" – untuk Petugas
-    //  Tidak termasuk: Dashboard, Scan QR
-    //  Termasuk: Absensi, Izin, Jadwal, Wali Asuh, Alumni, Laporan, Profil, Website, Logout
+    //  Berisi: Wali Asuh, Alumni, Scan QR, Profil, Website, Logout
     // ============================================================
     window.toggleBottomSheet = function() {
         const existing = document.querySelector('.bottom-sheet-overlay');
@@ -605,23 +540,14 @@
         `;
         overlay.innerHTML = `
             <div style="display:flex;flex-direction:column;gap:6px;">
-                <button class="btn btn-outline-secondary w-100 text-start" onclick="navigate('absensi');this.closest('.bottom-sheet-overlay').remove()">
-                    <i class="fas fa-clipboard-list me-2"></i> Data Absensi
-                </button>
-                <button class="btn btn-outline-secondary w-100 text-start" onclick="navigate('izin');this.closest('.bottom-sheet-overlay').remove()">
-                    <i class="fas fa-file-medical-alt me-2"></i> Data Izin
-                </button>
-                <button class="btn btn-outline-secondary w-100 text-start" onclick="navigate('jadwal');this.closest('.bottom-sheet-overlay').remove()">
-                    <i class="fas fa-calendar-alt me-2"></i> Jadwal Kegiatan
-                </button>
                 <button class="btn btn-outline-secondary w-100 text-start" onclick="navigate('wali_asuh');this.closest('.bottom-sheet-overlay').remove()">
                     <i class="fas fa-users-cog me-2"></i> Wali Asuh
                 </button>
                 <button class="btn btn-outline-secondary w-100 text-start" onclick="navigate('alumni');this.closest('.bottom-sheet-overlay').remove()">
                     <i class="fas fa-graduation-cap me-2"></i> Data Alumni
                 </button>
-                <button class="btn btn-outline-secondary w-100 text-start" onclick="navigate('laporan');this.closest('.bottom-sheet-overlay').remove()">
-                    <i class="fas fa-chart-pie me-2"></i> Laporan Summary
+                <button class="btn btn-outline-secondary w-100 text-start" onclick="navigate('scan');this.closest('.bottom-sheet-overlay').remove()">
+                    <i class="fas fa-qrcode me-2"></i> Scan QR
                 </button>
                 <hr>
                 <button class="btn btn-outline-secondary w-100 text-start" onclick="window.location.href='profile.html'">
@@ -697,7 +623,49 @@
         }
     });
 
-    console.log('✅ Dashboard Petugas loaded with sliding scan QR');
+    // ============================================================
+    //  HIDE SCAN BUTTON WHEN ON SCAN QR PAGE
+    // ============================================================
+    function updateMobileScanButton() {
+        const scanBtn = document.querySelector('.slider-scan-btn');
+        if (!scanBtn) return;
+        const currentPage = localStorage.getItem('srma19_petugas_active_menu') || 'dashboard';
+        if (currentPage === 'scan') {
+            scanBtn.classList.add('hidden');
+        } else {
+            scanBtn.classList.remove('hidden');
+        }
+    }
+
+    // Override navigate untuk update tombol
+    const originalNavigate = window.navigate;
+    window.navigate = function(page) {
+        if (originalNavigate) originalNavigate(page);
+        setTimeout(updateMobileScanButton, 100);
+    };
+
+    // ============================================================
+    //  🔥 INISIALISASI LANGSUNG – SAAT HALAMAN DIMUAT
+    //  Persis seperti Admin: updateMenuUI('dashboard'); navigate('dashboard');
+    // ============================================================
+    (function initPetugas() {
+        const savedPage = localStorage.getItem('srma19_petugas_active_menu') || 'dashboard';
+        if (savedPage && savedPage !== 'dashboard') {
+            if (typeof updateMenuUI === 'function') updateMenuUI(savedPage);
+            if (typeof navigate === 'function') navigate(savedPage);
+        } else {
+            if (typeof updateMenuUI === 'function') updateMenuUI('dashboard');
+            if (typeof navigate === 'function') navigate('dashboard');
+        }
+    })();
+
+    // ============================================================
+    //  UPDATE SCAN BUTTON
+    // ============================================================
+    document.addEventListener('DOMContentLoaded', updateMobileScanButton);
+    setTimeout(updateMobileScanButton, 500);
+
+    console.log('✅ Dashboard Petugas loaded: 5 bottom menus + Lainnya + Auto-render');
 </script>
 
 </body>

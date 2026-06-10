@@ -238,6 +238,9 @@
             background: var(--primary-dark);
             transform: scale(1.05);
         }
+        .mobile-scan-slider .slider-scan-btn.hidden {
+            display: none;
+        }
         /* ===== MOBILE BOTTOM NAV ===== */
         .bottom-nav {
             display: none;
@@ -267,17 +270,6 @@
         }
         .bottom-nav .bottom-item.active { color: var(--primary); }
         .bottom-nav .bottom-item i { font-size: 1.2rem; margin-bottom: 2px; }
-        /* ===== RESPONSIVE ===== */
-        @media (max-width: 768px) {
-            .sidebar { display: none; }
-            .main-content { margin-left: 0 !important; padding: 16px 12px 80px 12px; }
-            .bottom-nav { display: flex; }
-            .mobile-header-actions { display: flex; }
-            .mobile-scan-slider { display: flex; }
-        }
-        @media (min-width: 769px) {
-            .mobile-scan-slider { display: none; }
-        }
         /* ===== UTILITY ===== */
         .badge-status { border-radius: 50px; padding: 4px 12px; font-size: 0.7rem; font-weight: 600; }
         .badge-status.aktif { background: #d1fae5; color: #065f46; }
@@ -549,6 +541,7 @@
         </button>
     </div>
 </div>
+
 <!-- ===== MOBILE HEADER ACTIONS (SCAN QR SLIDER ONLY) ===== -->
 <div class="mobile-header-actions" id="mobileHeaderActions">
     <div id="mobileScanSlider" class="mobile-scan-slider">
@@ -560,6 +553,7 @@
         </a>
     </div>
 </div>
+
 <!-- ===== MOBILE BOTTOM NAV ===== -->
 <div class="bottom-nav" id="bottomNav">
     <a class="bottom-item" data-page="dashboard" onclick="navigate('dashboard')">
@@ -706,6 +700,30 @@
             });
         }
     });
+
+    // ============================================================
+    //  HIDE SCAN BUTTON WHEN ON SCAN QR PAGE
+    // ============================================================
+    function updateMobileScanButton() {
+        const scanBtn = document.querySelector('.slider-scan-btn');
+        if (!scanBtn) return;
+        const currentPage = localStorage.getItem('srma19_active_menu') || 'dashboard';
+        if (currentPage === 'absensi_qr') {
+            scanBtn.classList.add('hidden');
+        } else {
+            scanBtn.classList.remove('hidden');
+        }
+    }
+
+    // Override navigate untuk update tombol
+    const originalNavigate = window.navigate;
+    window.navigate = function(page) {
+        if (originalNavigate) originalNavigate(page);
+        setTimeout(updateMobileScanButton, 100);
+    };
+
+    document.addEventListener('DOMContentLoaded', updateMobileScanButton);
+    setTimeout(updateMobileScanButton, 500);
 
     console.log('✅ Dashboard Admin loaded with sliding scan QR');
 </script>
