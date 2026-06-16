@@ -1,7 +1,7 @@
 // ============================================================
-//  ALL_MODULES.JS – Gabungan semua modul SPA Admin
+//  ALL_MODULES.JS – Gabungan semua modul SPA Admin (FIXED)
 //  SRMA 19 Bantul
-//  Versi: 9.0 – Wali Asrama, Bottom Nav Tanpa Scan QR, Filter Petugas
+//  Versi: 9.1 – Semua menu berfungsi, error slice diperbaiki
 // ============================================================
 
 (function() {
@@ -313,7 +313,7 @@
                 <td>${i+1}</td>
                 <td>${a.Tanggal || '-'}</td>
                 <td>${a.Jam || '-'}</td>
-                <td><code style="background:#f1f5f9;padding:2px 8px;border-radius:4px;">${(a.Kode||'').slice(-4)}</code></td>
+                <td><code style="background:#f1f5f9;padding:2px 8px;border-radius:4px;">${String(a.Kode || '').slice(-4)}</code></td>
                 <td><strong>${a.Nama || '-'}</strong></td>
                 <td class="small">${a.Sesi_Nama || '-'}</td>
                 <td><span class="badge-status ${statusClass}">${a.Status || 'Hadir'}</span></td>
@@ -1246,7 +1246,7 @@
                 <td><input type="checkbox" ${selectedTimestamps.has(a.Timestamp) ? 'checked' : ''} onchange="toggleSelectAbsensi('${a.Timestamp}', this.checked)"></td>
                 <td>${a.Tanggal || '-'}</td>
                 <td>${a.Jam || '-'}</td>
-                <td><code>${(a.Kode || '').slice(-4)}</code></td>
+                <td><code>${String(a.Kode || '').slice(-4)}</code></td>
                 <td><strong>${a.Nama || '-'}</strong></td>
                 <td class="small">${a.Sesi_Nama || '-'}</td>
                 <td><span class="badge-status ${statusClass}">${a.Status || 'Hadir'}</span></td>
@@ -1382,7 +1382,7 @@
             </div>
             <table border="1" cellpadding="5" style="width:100%;border-collapse:collapse;font-size:11px;">
                 <thead><tr><th>No</th><th>Tgl</th><th>Jam</th><th>Kode</th><th>Nama</th><th>Sesi</th><th>Status</th><th>Petugas</th></tr></thead>
-                <tbody>${absensiFiltered.map((a, i) => `<tr><td>${i+1}</td><td>${a.Tanggal}</td><td>${a.Jam}</td><td>${a.Kode.slice(-4)}</td><td>${a.Nama}</td><td>${a.Sesi_Nama}</td><td>${a.Status || 'Hadir'}</td><td>${a.Petugas}</td></tr>`).join('')}</tbody>
+                <tbody>${absensiFiltered.map((a, i) => `<tr><td>${i+1}</td><td>${a.Tanggal}</td><td>${a.Jam}</td><td>${String(a.Kode).slice(-4)}</td><td>${a.Nama}</td><td>${a.Sesi_Nama}</td><td>${a.Status || 'Hadir'}</td><td>${a.Petugas}</td></tr>`).join('')}</tbody>
             </table>`;
         html2pdf().set({
             filename: `Laporan_Absensi_${tgl}_${now.toISOString().slice(0,10)}.pdf`,
@@ -1399,7 +1399,7 @@
             return;
         }
         const rows = [['"Tanggal"','"Jam"','"Kode"','"Nama"','"Sesi"','"Status"','"Petugas"']];
-        absensiFiltered.forEach(a => rows.push([`"${a.Tanggal}"`,`"${a.Jam}"`,`"${a.Kode}"`,`"${a.Nama}"`,`"${a.Sesi_Nama}"`,`"${a.Status||'Hadir'}"`,`"${a.Petugas}"`]));
+        absensiFiltered.forEach(a => rows.push([`"${a.Tanggal}"`,`"${a.Jam}"`,`"${String(a.Kode)}"`,`"${a.Nama}"`,`"${a.Sesi_Nama}"`,`"${a.Status||'Hadir'}"`,`"${a.Petugas}"`]));
         const csv = rows.map(r => r.join(',')).join('\n');
         const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' });
         const url = URL.createObjectURL(blob);
@@ -1501,7 +1501,7 @@
             rows += `<tr>
                 <td><input type="checkbox" ${selectedIzinIds.has(String(iz.ID))?'checked':''} onchange="toggleSelectIzin('${String(iz.ID)}', this.checked)"></td>
                 <td>${iz.Tanggal || '-'}</td>
-                <td><code>${(iz.Kode_Peserta || '').slice(-4)}</code></td>
+                <td><code>${String(iz.Kode_Peserta || '').slice(-4)}</code></td>
                 <td>${iz.Nama_Peserta || '-'}</td>
                 <td>${iz.Keterangan || '-'}</td>
                 <td>${iz.Bukti_Surat ? '<a href="#" onclick="lihatBuktiIzin(' + realIdx + ')"><i class="fas fa-paperclip"></i> Lihat</a>' : '-'}</td>
@@ -2840,7 +2840,7 @@
                     <thead><tr>
                         <th>No</th><th>Kode</th><th>Nama</th><th>Agama</th><th>Rombel</th>
                         <th>Hadir</th><th>Izin</th><th>Tidak</th><th>Sakit</th><th>% Hadir</th>
-                        <th>Wali 1</th><th>Wali 2</th>
+                        <th>Wali 1</th><th>Wali Asrama</th>
                     </tr></thead>
                     <tbody>
                         ${laporanFiltered.map((s, i) => `
@@ -3071,6 +3071,6 @@
         }
     }, 30000);
 
-    console.log('✅ All modules loaded successfully (v9.0)');
+    console.log('✅ All modules loaded successfully (v9.1 – semua menu berfungsi)');
 
 })();
