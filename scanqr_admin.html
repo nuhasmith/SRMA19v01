@@ -15,36 +15,135 @@
         :root {
             --primary: #0d6efd;
             --primary-dark: #0a58ca;
-            --accent: #ff6b35;
             --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
             --bg-body: #f4f6f9;
+            --card-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            --radius: 14px;
         }
         body {
             font-family: 'Inter', sans-serif;
             background: var(--bg-body);
             min-height: 100vh;
-            padding: 12px;
+            padding: 16px;
         }
         .container-custom {
-            max-width: 520px;
+            max-width: 560px;
             margin: 0 auto;
         }
         .card-modern {
             background: #fff;
-            border-radius: 14px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
             padding: 16px 20px;
             margin-bottom: 16px;
         }
+        .card-modern h6 { font-weight: 700; color: #1e293b; }
+
+        /* Badge Sesi */
         .badge-sesi {
+            display: inline-block;
             border-radius: 50px;
-            padding: 4px 12px;
-            font-size: 0.7rem;
+            padding: 4px 14px;
+            font-size: 0.75rem;
             font-weight: 600;
         }
         .badge-active { background: #d1fae5; color: #065f46; }
         .badge-outside { background: #fef3c7; color: #92400e; }
         .badge-manual { background: #ede9fe; color: #5b21b6; }
+
+        /* Scanner */
+        #reader {
+            width: 100%;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px dashed #d0d0d0;
+            background: #f8f8f8;
+            min-height: 220px;
+        }
+        #reader.scanning { border-color: var(--primary); }
+
+        /* Hasil Scan - Avatar */
+        .result-avatar {
+            width: 64px; height: 64px;
+            border-radius: 50%;
+            background: #e0f2fe;
+            color: var(--primary);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            font-weight: 800;
+        }
+
+        /* Form - Compact */
+        .form-section label { font-weight: 600; font-size: 0.8rem; color: #334155; }
+        .form-select-sm, .form-control-sm { border-radius: 8px; }
+
+        /* Tombol */
+        .btn-main {
+            border-radius: 50px;
+            padding: 10px 20px;
+            font-weight: 600;
+        }
+
+        /* Log */
+        .log-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 0.85rem;
+        }
+        .log-item:last-child { border-bottom: none; }
+
+        /* Status Koneksi */
+        .pulse-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: #10b981;
+            display: inline-block;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%,100% { box-shadow: 0 0 0 0 rgba(16,185,129,0.6); }
+            50% { box-shadow: 0 0 0 10px rgba(16,185,129,0); }
+        }
+        .connection-status { font-size: 0.8rem; }
+
+        /* Custom Session Form */
+        .custom-session-form {
+            background: #f8fafc;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+            margin-top: 10px;
+        }
+
+        /* Header */
+        .header-scan {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .btn-back {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #475569;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .btn-back:hover { background: #f1f5f9; color: #0d6efd; }
+
+        /* Toggle Switch */
         .toggle-switch {
             position: relative;
             display: inline-block;
@@ -73,76 +172,33 @@
         }
         input:checked + .toggle-slider { background: #8b5cf6; }
         input:checked + .toggle-slider:before { transform: translateX(20px); }
-        #reader {
-            width: 100%;
-            border-radius: 10px;
-            overflow: hidden;
-            border: 2px dashed #d0d0d0;
-            background: #f8f8f8;
-            min-height: 220px;
-        }
-        .log-item {
-            padding: 8px 0;
-            border-bottom: 1px solid #f5f5f5;
-            font-size: 0.82rem;
-            display: flex;
-            justify-content: space-between;
-        }
-        .log-item:last-child { border-bottom: none; }
-        .btn-confirm { background: #10b981; color: #fff; border: none; border-radius: 10px; padding: 10px; width: 100%; font-weight: 600; }
-        .btn-scan { border-radius: 10px; font-weight: 600; padding: 10px; width: 100%; }
-        .pulse-dot {
-            width: 8px; height: 8px; border-radius: 50%;
-            background: #10b981;
-            display: inline-block;
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-            0%,100% { box-shadow: 0 0 0 0 rgba(16,185,129,0.6); }
-            50% { box-shadow: 0 0 0 10px rgba(16,185,129,0); }
-        }
+
+        /* Modal */
+        .modal-content { border-radius: 20px; }
+        .modal-header { border-bottom: none; }
+        .modal-footer { border-top: none; }
+
         @media (max-width: 480px) {
-            .container-custom { padding: 8px; }
-            #reader { min-height: 200px; }
-        }
-        .header-scan {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-        .btn-back {
-            background: #fff;
-            border: 1px solid #e2e8f0;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #475569;
-            text-decoration: none;
-            transition: all 0.2s;
-        }
-        .btn-back:hover {
-            background: #f1f5f9;
-            color: #0d6efd;
+            .container-custom { padding: 0; }
         }
     </style>
 </head>
 <body>
 
 <div class="container-custom">
-    <!-- Header -->
+
+    <!-- ===== HEADER ===== -->
     <div class="header-scan">
         <a href="dashboard_admin.html" class="btn-back"><i class="fas fa-arrow-left"></i></a>
-        <h5 class="fw-bold mb-0"><i class="fas fa-qrcode me-2" style="color:#0d6efd;"></i>Scan QR Admin</h5>
-        <button class="btn btn-sm btn-outline-secondary rounded-pill" id="soundToggleBtn" onclick="toggleSound()" title="Suara">
-            <i class="fas fa-volume-up"></i>
-        </button>
+        <h4 class="fw-bold mb-0"><i class="fas fa-qrcode me-2" style="color:var(--primary);"></i>Scan QR Admin</h4>
+        <div>
+            <button class="btn btn-sm btn-outline-secondary rounded-pill" id="soundToggleBtn" onclick="toggleSound()" title="Suara">
+                <i class="fas fa-volume-up"></i>
+            </button>
+        </div>
     </div>
 
-    <!-- ===== Sesi Info ===== -->
+    <!-- ===== SESI INFO ===== -->
     <div class="card-modern">
         <div class="d-flex justify-content-between align-items-center">
             <div>
@@ -155,155 +211,205 @@
                 </span>
             </div>
         </div>
-        
+
         <!-- Mode Manual -->
         <div class="mt-2 pt-2 border-top">
-            <div class="d-flex align-items-center gap-2 mb-2">
-                <label class="toggle-switch">
-                    <input type="checkbox" id="manualModeSwitch" onchange="toggleManualMode()">
-                    <span class="toggle-slider"></span>
-                </label>
-                <span class="small fw-semibold"><i class="fas fa-user-shield me-1"></i>Mode Manual (Admin)</span>
+            <div class="d-flex align-items-center gap-3 flex-wrap">
+                <div class="d-flex align-items-center gap-2">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="manualModeSwitch" onchange="toggleManualMode()">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="small fw-semibold">Mode Manual</span>
+                </div>
+                <div id="manualSessionSelector" style="display:none;">
+                    <select class="form-select form-select-sm rounded-pill" id="manualSessionSelect" onchange="onManualSessionChange()">
+                        <option value="">-- Pilih Sesi --</option>
+                    </select>
+                    <button class="btn btn-sm btn-outline-success rounded-pill" onclick="showCustomSessionForm()">
+                        <i class="fas fa-plus-circle me-1"></i>Baru
+                    </button>
+                </div>
             </div>
-            <div id="manualSessionSelector" style="display:none;">
-                <select class="form-select form-select-sm" id="manualSessionSelect" onchange="onManualSessionChange()">
-                    <option value="">-- Pilih Sesi --</option>
-                </select>
-                <button class="btn btn-sm btn-outline-success rounded-pill" onclick="showCustomSessionForm()">
-                    <i class="fas fa-plus-circle me-1"></i>Sesi Baru
-                </button>
-            </div>
-            <!-- Custom Sesi -->
-            <div id="customSessionForm" class="custom-session-form" style="display:none;margin-top:10px;background:#f8fafc;padding:12px;border-radius:10px;border:1px solid #e2e8f0;">
+            <!-- Custom Session Form -->
+            <div id="customSessionForm" class="custom-session-form" style="display:none;">
                 <div class="row g-2">
+                    <div class="col-12"><input type="text" class="form-control form-control-sm" id="customSesiNama" placeholder="Nama Sesi"></div>
+                    <div class="col-6"><input type="time" class="form-control form-control-sm" id="customSesiMulai"></div>
+                    <div class="col-6"><input type="time" class="form-control form-control-sm" id="customSesiSelesai"></div>
                     <div class="col-12">
-                        <label class="small fw-semibold">Nama Sesi</label>
-                        <input type="text" class="form-control form-control-sm" id="customSesiNama" placeholder="Contoh: Sholat Isya (Khusus)">
-                    </div>
-                    <div class="col-6">
-                        <label class="small fw-semibold">Mulai</label>
-                        <input type="time" class="form-control form-control-sm" id="customSesiMulai">
-                    </div>
-                    <div class="col-6">
-                        <label class="small fw-semibold">Selesai</label>
-                        <input type="time" class="form-control form-control-sm" id="customSesiSelesai">
-                    </div>
-                    <div class="col-12">
-                        <div class="d-flex gap-2">
-                            <button class="btn btn-sm btn-success w-50" onclick="applyCustomSession()">Gunakan Sesi Ini</button>
-                            <button class="btn btn-sm btn-outline-secondary w-50" onclick="cancelCustomSession()">Batal</button>
-                        </div>
+                        <button class="btn btn-sm btn-success w-50" onclick="applyCustomSession()">Gunakan</button>
+                        <button class="btn btn-sm btn-outline-secondary w-50" onclick="cancelCustomSession()">Batal</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- ===== Scanner ===== -->
-    <div class="card-modern p-3">
-        <div id="reader" style="width:100%;border-radius:10px;overflow:hidden;border:2px dashed #d0d0d0;background:#f8f8f8;min-height:220px;"></div>
-        <div class="mt-3 text-center">
-            <button class="btn btn-primary rounded-pill" id="btnStartScan" onclick="startScan()">
+    <!-- ===== SCANNER ===== -->
+    <div class="card-modern p-0 overflow-hidden">
+        <div id="reader"></div>
+        <div class="p-3 text-center">
+            <button class="btn btn-primary btn-main" id="btnStartScan" onclick="startScan()">
                 <i class="fas fa-camera me-2"></i>Mulai Scan
             </button>
-            <button class="btn btn-danger rounded-pill d-none" id="btnStopScan" onclick="stopScan()">
+            <button class="btn btn-danger btn-main d-none" id="btnStopScan" onclick="stopScan()">
                 <i class="fas fa-stop me-2"></i>Hentikan
             </button>
         </div>
     </div>
 
-    <!-- ===== Hasil Scan & Form ===== -->
-    <div id="resultContainer" class="d-none mt-3">
-        <div class="card-modern p-3" id="resultCard">
-            <h6 class="fw-bold mb-2"><i class="fas fa-info-circle me-2"></i>Data Peserta</h6>
+    <!-- ===== HASIL SCAN ===== -->
+    <div id="resultContainer" class="d-none">
+        <div class="card-modern">
+            <h6 class="fw-bold mb-3"><i class="fas fa-info-circle me-2" style="color:var(--primary);"></i>Data Peserta</h6>
             <div class="text-center">
-                <div id="resultAvatar" style="width:60px;height:60px;border-radius:50%;background:#e0f2fe;display:inline-flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:800;color:var(--primary);">?</div>
+                <div class="result-avatar" id="resultAvatar">?</div>
                 <div class="mt-2">
-                    <div class="fw-bold" id="resultNama">-</div>
-                    <div class="text-muted small"><span id="resultKode">-</span> &bull; <span id="resultJK">-</span> &bull; <span id="resultAgama">-</span></div>
+                    <div class="fw-bold fs-5" id="resultNama">-</div>
+                    <div class="text-muted small">
+                        <span id="resultKode">-</span> &bull; <span id="resultJK">-</span> &bull; <span id="resultAgama">-</span>
+                    </div>
                     <div><span class="badge-sesi" id="resultSesi">-</span></div>
                 </div>
-                
-                <!-- ===== Form Tambahan ===== -->
-                <div class="form-section mt-3">
-                    <label>Status Kehadiran</label>
-                    <select class="form-select form-select-sm" id="statusKehadiranSelect" onchange="toggleIzinUpload()">
-                        <option value="Hadir">Hadir</option>
-                        <option value="Izin">Izin</option>
-                        <option value="Tidak Berangkat">Tidak Berangkat</option>
-                        <option value="Sakit">Sakit</option>
-                    </select>
-                    
-                    <!-- Upload Surat (hanya muncul jika status 'Izin') -->
-                    <div id="izinUploadContainer" style="display:none; margin-top:10px;">
-                        <label class="small fw-semibold">Upload Bukti Surat (max 50KB)</label>
-                        <input type="file" accept="image/*" class="form-control form-control-sm" id="izinBuktiSurat">
-                        <small class="text-muted">Format: JPG, PNG. Maksimal 50KB.</small>
-                    </div>
+            </div>
 
-                    <label class="mt-2 small">Puasa</label>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="puasa" id="puasaYa" value="Ya" checked>
-                        <label class="form-check-label" for="puasaYa">Ya</label>
+            <!-- FORM ABSENSI -->
+            <div class="form-section mt-3">
+                <div class="row g-2">
+                    <div class="col-md-6">
+                        <label>Status</label>
+                        <select class="form-select form-select-sm" id="statusKehadiranSelect" onchange="toggleIzinUpload()">
+                            <option value="Hadir">Hadir</option>
+                            <option value="Izin">Izin</option>
+                            <option value="Tidak Berangkat">Tidak Berangkat</option>
+                            <option value="Sakit">Sakit</option>
+                        </select>
                     </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="puasa" id="puasaTidak" value="Tidak">
-                        <label class="form-check-label" for="puasaTidak">Tidak</label>
-                    </div>
-
-                    <label class="mt-2 small">Pelanggaran</label>
-                    <select class="form-select form-select-sm" id="pelanggaranSelect">
-                        <option value="Tidak Ada">Tidak Ada</option>
-                        <option value="Ringan">Ringan</option>
-                        <option value="Sedang">Sedang</option>
-                        <option value="Berat">Berat</option>
-                    </select>
-                    <div id="pelanggaranKeteranganContainer" class="mt-1" style="display:none;">
-                        <input type="text" class="form-control form-control-sm" id="pelanggaranKeterangan" placeholder="Keterangan...">
-                    </div>
-
-                    <label class="mt-2 small">Kesehatan</label>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="kesehatan" id="kesehatanSehat" value="Sehat" checked>
-                        <label class="form-check-label" for="kesehatanSehat">Sehat</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="kesehatan" id="kesehatanSakit" value="Sakit">
-                        <label class="form-check-label" for="kesehatanSakit">Sakit</label>
-                    </div>
-                    <div id="kesehatanKeteranganContainer" class="mt-1" style="display:none;">
-                        <input type="text" class="form-control form-control-sm" id="kesehatanKeterangan" placeholder="Keterangan...">
+                    <div class="col-md-6">
+                        <label>Puasa</label>
+                        <div class="d-flex gap-3">
+                            <div class="form-check"><input class="form-check-input" type="radio" name="puasa" id="puasaYa" value="Ya" checked><label class="form-check-label" for="puasaYa">Ya</label></div>
+                            <div class="form-check"><input class="form-check-input" type="radio" name="puasa" id="puasaTidak" value="Tidak"><label class="form-check-label" for="puasaTidak">Tidak</label></div>
+                        </div>
                     </div>
                 </div>
 
-                <button class="btn-confirm mt-3" id="btnConfirm" onclick="confirmAbsensi()">
+                <div class="row g-2 mt-2">
+                    <div class="col-md-6">
+                        <label>Pelanggaran</label>
+                        <select class="form-select form-select-sm" id="pelanggaranSelect" onchange="togglePelanggaranKeterangan()">
+                            <option value="Tidak Ada">Tidak Ada</option>
+                            <option value="Ringan">Ringan</option>
+                            <option value="Sedang">Sedang</option>
+                            <option value="Berat">Berat</option>
+                        </select>
+                        <div id="pelanggaranKeteranganContainer" style="display:none;margin-top:4px;">
+                            <input type="text" class="form-control form-control-sm" id="pelanggaranKeterangan" placeholder="Keterangan...">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label>Kesehatan</label>
+                        <div class="d-flex gap-3">
+                            <div class="form-check"><input class="form-check-input" type="radio" name="kesehatan" id="kesehatanSehat" value="Sehat" checked><label class="form-check-label" for="kesehatanSehat">Sehat</label></div>
+                            <div class="form-check"><input class="form-check-input" type="radio" name="kesehatan" id="kesehatanSakit" value="Sakit"><label class="form-check-label" for="kesehatanSakit">Sakit</label></div>
+                        </div>
+                        <div id="kesehatanKeteranganContainer" style="display:none;margin-top:4px;">
+                            <input type="text" class="form-control form-control-sm" id="kesehatanKeterangan" placeholder="Keterangan...">
+                        </div>
+                    </div>
+                </div>
+
+                <div id="izinUploadContainer" style="display:none;margin-top:8px;">
+                    <label>Upload Bukti Surat (max 50KB)</label>
+                    <input type="file" accept="image/*" class="form-control form-control-sm" id="izinBuktiSurat">
+                    <small class="text-muted">Format JPG/PNG. Maksimal 50KB.</small>
+                </div>
+
+                <!-- ===== CATATAN ===== -->
+                <div class="mt-3">
+                    <label><i class="fas fa-sticky-note me-1"></i>Catatan</label>
+                    <textarea class="form-control form-control-sm" id="catatanInput" rows="2" placeholder="Tambahkan catatan untuk peserta ini (opsional)..."></textarea>
+                </div>
+
+                <!-- ===== FITUR HP ===== -->
+                <div class="mt-3 pt-3 border-top">
+                    <label class="fw-bold"><i class="fas fa-mobile-alt me-1"></i>Peminjaman HP</label>
+                    <div id="hpStatusContainer" class="mt-2">
+                        <div id="hpStatusMessage" class="small text-muted">Scan untuk mengecek status HP.</div>
+                        <div id="hpActionContainer" class="mt-2" style="display:none;">
+                            <button class="btn btn-warning btn-sm btn-main w-100" id="btnPinjamHP" onclick="handleHP('Meminjam')">
+                                <i class="fas fa-hand-holding me-1"></i>Pinjam HP
+                            </button>
+                            <button class="btn btn-info btn-sm btn-main w-100" id="btnKembalikanHP" onclick="handleHP('Mengembalikan')" style="display:none;">
+                                <i class="fas fa-undo-alt me-1"></i>Kembalikan HP
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TOMBOL AKSI -->
+            <div class="d-grid gap-2 mt-3">
+                <button class="btn btn-success btn-main" id="btnConfirm" onclick="confirmAbsensi()">
                     <i class="fas fa-check-circle me-1"></i> Konfirmasi Absensi
                 </button>
-                <button class="btn btn-outline-secondary btn-sm rounded-pill mt-1 w-100" onclick="resetScan()">
+                <button class="btn btn-outline-secondary btn-main" onclick="resetScan()">
                     <i class="fas fa-redo me-1"></i> Scan Ulang
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- ===== Log Absensi ===== -->
+    <!-- ===== LOG ABSENSI ===== -->
     <div class="card-modern">
         <div class="d-flex justify-content-between align-items-center">
-            <h6 class="fw-bold mb-0"><i class="fas fa-list-alt me-2" style="color:var(--accent);"></i>Log Absensi</h6>
+            <h6 class="fw-bold mb-0"><i class="fas fa-list-alt me-2" style="color:var(--warning);"></i>Log Absensi</h6>
             <button class="btn btn-sm btn-outline-secondary rounded-pill" onclick="clearLocalLog()"><i class="fas fa-trash-alt"></i></button>
         </div>
-        <div id="logContainer" style="max-height:200px;overflow-y:auto;"></div>
+        <div id="logContainer" style="max-height:200px;overflow-y:auto;margin-top:8px;">
+            <p class="text-center text-muted py-2 small">Belum ada data</p>
+        </div>
     </div>
 
-    <!-- Status Koneksi -->
-    <div class="text-center mt-2 small text-muted" id="connectionStatus">
-        <span class="pulse-dot me-1"></span>Memeriksa koneksi...
+    <!-- ===== STATUS KONEKSI ===== -->
+    <div class="text-center mt-2 connection-status">
+        <span class="pulse-dot me-1"></span><span id="connectionStatus">Memeriksa...</span>
+    </div>
+
+</div>
+
+<!-- ===== MODAL KONFIRMASI TIMPA DATA ===== -->
+<div class="modal fade" id="confirmOverwriteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 rounded-4">
+            <div class="modal-header border-0">
+                <h5 class="modal-title fw-bold"><i class="fas fa-exclamation-triangle text-warning me-2"></i>Data Sudah Ada</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-muted">Anda sudah merekam absensi untuk sesi ini sebelumnya.</p>
+                <div class="alert alert-info">
+                    <strong>Peserta:</strong> <span id="modalNama">-</span><br>
+                    <strong>Kode:</strong> <span id="modalKode">-</span><br>
+                    <strong>Sesi:</strong> <span id="modalSesi">-</span>
+                </div>
+                <p class="mb-0">Apakah Anda ingin <strong>menimpa data lama</strong> dengan data baru?</p>
+                <p class="small text-muted">Data yang akan diperbarui: Status, Pelanggaran, Kesehatan, Catatan.</p>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tidak Jadi</button>
+                <button type="button" class="btn btn-primary" id="btnOverwriteConfirm">
+                    <i class="fas fa-sync-alt me-1"></i>Ya, Timpa Data
+                </button>
+            </div>
+        </div>
     </div>
 </div>
 
 <script>
     // ============================================================
-    //  1. AUTH
+    //  AUTH
     // ============================================================
     if (!Auth.requireAuth('login.html')) throw new Error('Silakan login.');
     const user = Auth.getCurrentUser();
@@ -312,9 +418,10 @@
         throw new Error('Akses ditolak');
     }
     window.currentUser = user;
+    const isAdmin = true;
 
     // ============================================================
-    //  2. STATE
+    //  STATE
     // ============================================================
     let html5QrCode = null;
     let isScanning = false;
@@ -327,10 +434,10 @@
     let soundEnabled = true;
     let beepAudio = null;
     let audioReady = false;
-    const isAdmin = user.role === 'admin';
+    let isOverwriteMode = false;
 
     // ============================================================
-    //  3. SOUND (BEEP)
+    //  SOUND (BEEP)
     // ============================================================
     const SOUND_KEY = 'srma19_sound_enabled';
 
@@ -366,12 +473,8 @@
             try {
                 beepAudio.currentTime = 0;
                 beepAudio.play();
-            } catch(e) {
-                fallbackBeep();
-            }
-        } else {
-            fallbackBeep();
-        }
+            } catch(e) { fallbackBeep(); }
+        } else { fallbackBeep(); }
     }
 
     function fallbackBeep() {
@@ -398,7 +501,7 @@
     }
 
     // ============================================================
-    //  4. FETCH JADWAL
+    //  FETCH JADWAL
     // ============================================================
     async function fetchJadwal() {
         try {
@@ -442,19 +545,18 @@
     }
 
     // ============================================================
-    //  5. UPDATE SESI DISPLAY
+    //  UPDATE SESI DISPLAY
     // ============================================================
     function updateSesiDisplay() {
         const now = new Date();
         const currentTime = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
         document.getElementById('currentTime').textContent = currentTime;
 
-        if (isAdmin && isManualMode && manualSesi) {
-            if (manualSesi.kode && manualSesi.kode.startsWith('custom_')) {
-                document.getElementById('currentSessionName').textContent = `[Custom] ${manualSesi.nama} (Manual)`;
-            } else {
-                document.getElementById('currentSessionName').textContent = `[${manualSesi.agama}] ${manualSesi.nama} (Manual)`;
-            }
+        if (isManualMode && manualSesi) {
+            const label = manualSesi.kode && manualSesi.kode.startsWith('custom_')
+                ? `[Custom] ${manualSesi.nama} (Manual)`
+                : `[${manualSesi.agama}] ${manualSesi.nama} (Manual)`;
+            document.getElementById('currentSessionName').textContent = label;
             document.getElementById('currentSessionBadge').className = 'badge-sesi badge-manual';
         } else {
             const currentMinutes = now.getHours() * 60 + now.getMinutes();
@@ -464,10 +566,7 @@
                 const [h2, m2] = s.selesai.split(':').map(Number);
                 const start = h1 * 60 + m1;
                 const end = h2 * 60 + m2;
-                if (currentMinutes >= start && currentMinutes <= end) {
-                    found = s;
-                    break;
-                }
+                if (currentMinutes >= start && currentMinutes <= end) { found = s; break; }
             }
             if (found) {
                 document.getElementById('currentSessionName').textContent = `[${found.agama}] ${found.nama}`;
@@ -480,10 +579,9 @@
     }
 
     // ============================================================
-    //  6. MANUAL MODE (ADMIN)
+    //  MANUAL MODE
     // ============================================================
     function toggleManualMode() {
-        if (!isAdmin) return;
         isManualMode = document.getElementById('manualModeSwitch').checked;
         const selector = document.getElementById('manualSessionSelector');
         if (selector) selector.style.display = isManualMode ? 'block' : 'none';
@@ -514,22 +612,18 @@
     }
 
     function saveManualState() {
-        if (!isAdmin) return;
         sessionStorage.setItem('srma19_absensi_state', JSON.stringify({ manualMode: isManualMode, manualSesi }));
     }
 
     function restoreManualState() {
-        if (!isAdmin) return;
         const saved = sessionStorage.getItem('srma19_absensi_state');
         if (!saved) return;
         try {
             const state = JSON.parse(saved);
             if (state.manualMode) {
                 isManualMode = true;
-                const switchEl = document.getElementById('manualModeSwitch');
-                if (switchEl) switchEl.checked = true;
-                const selector = document.getElementById('manualSessionSelector');
-                if (selector) selector.style.display = 'block';
+                document.getElementById('manualModeSwitch').checked = true;
+                document.getElementById('manualSessionSelector').style.display = 'block';
                 if (state.manualSesi) {
                     setTimeout(() => {
                         const select = document.getElementById('manualSessionSelect');
@@ -552,8 +646,7 @@
         document.getElementById('customSessionForm').style.display = 'block';
         document.getElementById('manualSessionSelect').disabled = true;
         const now = new Date();
-        const currentTime = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
-        document.getElementById('customSesiMulai').value = currentTime;
+        document.getElementById('customSesiMulai').value = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
         document.getElementById('customSesiSelesai').value = '';
     }
 
@@ -569,8 +662,8 @@
         const nama = document.getElementById('customSesiNama').value.trim();
         const mulai = document.getElementById('customSesiMulai').value;
         const selesai = document.getElementById('customSesiSelesai').value;
-        if (!nama) { window.showToast('Nama sesi wajib diisi.', 'error'); return; }
-        if (!mulai) { window.showToast('Waktu mulai wajib diisi.', 'error'); return; }
+        if (!nama) { showToast('Nama sesi wajib diisi.', 'error'); return; }
+        if (!mulai) { showToast('Waktu mulai wajib diisi.', 'error'); return; }
         manualSesi = {
             kode: 'custom_' + Date.now(),
             nama: nama,
@@ -583,11 +676,11 @@
         document.getElementById('manualSessionSelect').value = '';
         cancelCustomSession();
         saveManualState();
-        window.showToast('✅ Sesi kustom "' + nama + '" dipilih.', 'success');
+        showToast('✅ Sesi kustom "' + nama + '" dipilih.', 'success');
     }
 
     // ============================================================
-    //  7. Toggle Upload Surat jika status 'Izin'
+    //  TOGGLE UPLOAD SURAT & PELANGGARAN & KESEHATAN
     // ============================================================
     function toggleIzinUpload() {
         const status = document.getElementById('statusKehadiranSelect').value;
@@ -600,8 +693,32 @@
         }
     }
 
+    function togglePelanggaranKeterangan() {
+        const val = document.getElementById('pelanggaranSelect').value;
+        const container = document.getElementById('pelanggaranKeteranganContainer');
+        if (val !== 'Tidak Ada') {
+            container.style.display = 'block';
+        } else {
+            container.style.display = 'none';
+            document.getElementById('pelanggaranKeterangan').value = '';
+        }
+    }
+
+    // Kesehatan radio button handler
+    document.querySelectorAll('input[name="kesehatan"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            const container = document.getElementById('kesehatanKeteranganContainer');
+            if (this.value === 'Sakit') {
+                container.style.display = 'block';
+            } else {
+                container.style.display = 'none';
+                document.getElementById('kesehatanKeterangan').value = '';
+            }
+        });
+    });
+
     // ============================================================
-    //  8. SCAN QR – OPTIMASI CEPAT, MIRING/TERBALIK
+    //  SCAN QR
     // ============================================================
     async function startScan() {
         if (isScanning) return;
@@ -611,19 +728,15 @@
         if (reader) reader.classList.add('scanning');
         try {
             html5QrCode = new Html5Qrcode('reader');
-            const config = { 
-                fps: 60, 
-                qrbox: { width: 500, height: 500 }, 
-                aspectRatio: 1.0 
-            };
+            const config = { fps: 60, qrbox: { width: 500, height: 500 }, aspectRatio: 1.0 };
             await html5QrCode.start({ facingMode: 'environment' }, config, onScanSuccess, () => {});
             isScanning = true;
             document.getElementById('btnStartScan').classList.add('d-none');
             document.getElementById('btnStopScan').classList.remove('d-none');
-            window.showToast('Kamera siap. Arahkan ke QR Code.', 'success');
+            showToast('Kamera siap. Arahkan ke QR Code.', 'success');
         } catch (err) {
             if (reader) reader.classList.remove('scanning');
-            window.showToast('Gagal mengakses kamera.', 'error');
+            showToast('Gagal mengakses kamera.', 'error');
         }
     }
 
@@ -639,15 +752,16 @@
         html5QrCode = null;
     }
 
-    function onScanSuccess(decodedText) {
+    async function onScanSuccess(decodedText) {
         if (scanCooldown) return;
         scanCooldown = true;
         if (soundEnabled) playBeep();
         const code = decodedText.trim();
-        API.searchPeserta(code).then(data => {
+        try {
+            const data = await API.searchPeserta(code);
             if (data.status === 'success') {
                 let finalSesi, finalSesiNama, dalamSesi, manual;
-                if (isAdmin && isManualMode && manualSesi) {
+                if (isManualMode && manualSesi) {
                     finalSesi = manualSesi.kode;
                     finalSesiNama = manualSesi.nama;
                     dalamSesi = true;
@@ -669,18 +783,45 @@
                     manual: manual,
                     timestamp: new Date().toISOString()
                 };
-                displayResult();
-                setTimeout(() => { scanCooldown = false; }, 800);
+
+                // Cek duplikat dengan record dummy
+                const checkResult = await API.recordAbsensi(
+                    currentScanData.code,
+                    currentScanData.nama,
+                    currentScanData.sesi,
+                    currentScanData.sesi_nama,
+                    user?.nama || 'Unknown',
+                    currentScanData.agama,
+                    'Tidak',
+                    'Tidak Ada',
+                    '',
+                    'Sehat',
+                    '',
+                    'Hadir'
+                );
+
+                if (checkResult.status === 'duplicate') {
+                    isOverwriteMode = true;
+                    document.getElementById('modalNama').textContent = currentScanData.nama;
+                    document.getElementById('modalKode').textContent = currentScanData.code;
+                    document.getElementById('modalSesi').textContent = currentScanData.sesi_nama;
+                    const modal = new bootstrap.Modal(document.getElementById('confirmOverwriteModal'));
+                    modal.show();
+                    document.getElementById('resultContainer').classList.add('d-none');
+                } else {
+                    isOverwriteMode = false;
+                    displayResult();
+                }
             } else {
-                window.showToast(data.message || 'Peserta tidak ditemukan.', 'error');
+                showToast(data.message || 'Peserta tidak ditemukan.', 'error');
                 resetScan();
-                setTimeout(() => { scanCooldown = false; }, 800);
             }
-        }).catch(() => {
-            window.showToast('Gagal menghubungi server.', 'error');
+        } catch (e) {
+            showToast('Gagal menghubungi server.', 'error');
             resetScan();
+        } finally {
             setTimeout(() => { scanCooldown = false; }, 800);
-        });
+        }
     }
 
     function displayResult() {
@@ -695,15 +836,22 @@
         badge.className = 'badge-sesi ' + (d.manual ? 'badge-manual' : (d.dalam_sesi ? 'badge-active' : 'badge-outside'));
         document.getElementById('resultContainer').classList.remove('d-none');
         document.getElementById('resultContainer').scrollIntoView({ behavior:'smooth', block:'center' });
+        
+        // Cek status HP setelah data tampil
+        setTimeout(() => { checkHPStatus(); }, 300);
     }
 
     function resetScan() {
         currentScanData = null;
         document.getElementById('resultContainer').classList.add('d-none');
+        isOverwriteMode = false;
+        // Reset HP status
+        document.getElementById('hpStatusMessage').textContent = 'Scan untuk mengecek status HP.';
+        document.getElementById('hpActionContainer').style.display = 'none';
     }
 
     // ============================================================
-    //  9. KONFIRMASI ABSENSI + INTEGRASI IZIN
+    //  KONFIRMASI ABSENSI
     // ============================================================
     async function confirmAbsensi() {
         if (!currentScanData) return;
@@ -721,14 +869,14 @@
         const keteranganKesehatan = document.getElementById('kesehatanKeteranganContainer').style.display === 'block'
             ? document.getElementById('kesehatanKeterangan').value.trim()
             : '';
+        const catatan = document.getElementById('catatanInput').value.trim();
 
-        // Jika status Izin, upload bukti surat
         let buktiSurat = '';
         if (statusKehadiran === 'Izin') {
             const fileInput = document.getElementById('izinBuktiSurat');
             if (fileInput.files && fileInput.files[0]) {
                 if (fileInput.files[0].size > 50000) {
-                    window.showToast('Ukuran file maksimal 50KB.', 'error');
+                    showToast('Ukuran file maksimal 50KB.', 'error');
                     btn.disabled = false;
                     btn.innerHTML = '<i class="fas fa-check-circle me-1"></i> Konfirmasi Absensi';
                     return;
@@ -742,63 +890,157 @@
         }
 
         try {
-            // 1. Catat absensi dengan status yang dipilih
-            const hasilAbsensi = await API.recordAbsensi(
-                currentScanData.code,
-                currentScanData.nama,
-                currentScanData.sesi,
-                currentScanData.sesi_nama,
-                user?.nama || 'Unknown',
-                currentScanData.agama,
-                puasa,
-                pelanggaran,
-                pelanggaranKeterangan,
-                kondisiKesehatan,
-                keteranganKesehatan,
-                statusKehadiran
-            );
-
-            // 2. Jika status Izin dan ada bukti surat, simpan ke menu Izin
-            if (statusKehadiran === 'Izin' && buktiSurat) {
-                const dataIzin = {
-                    kode_peserta: currentScanData.code,
-                    nama_peserta: currentScanData.nama,
+            if (isOverwriteMode) {
+                // Timpa data
+                const result = await API.updateAbsensi({
+                    code: currentScanData.code,
+                    nama: currentScanData.nama,
+                    sesi: currentScanData.sesi,
+                    sesi_nama: currentScanData.sesi_nama,
                     tanggal: new Date().toISOString().split('T')[0],
-                    keterangan: 'Izin via scan QR',
-                    petugas: user?.nama || 'Unknown',
-                    bukti_surat: buktiSurat
-                };
-                await API.addIzin(dataIzin);
-            }
-
-            if (hasilAbsensi.status === 'recorded') {
-                addLocalLog('recorded');
-                resetScan();
-                window.showToast('✅ Tercatat (Izin + surat jika ada)', 'success');
-            } else if (hasilAbsensi.status === 'already_recorded') {
-                addLocalLog('duplicate');
-                resetScan();
-                window.showToast('⚠️ Sudah tercatat sebelumnya', 'warning');
+                    status: statusKehadiran,
+                    puasa: puasa,
+                    pelanggaran: pelanggaran,
+                    pelanggaran_keterangan: pelanggaranKeterangan,
+                    kondisi_kesehatan: kondisiKesehatan,
+                    keterangan_kesehatan: keteranganKesehatan,
+                    catatan: catatan,
+                    petugas: user?.nama || 'Unknown'
+                });
+                if (result.status === 'updated') {
+                    addLocalLog('updated', catatan);
+                    resetScan();
+                    showToast('✅ Data absensi diperbarui.', 'success');
+                } else {
+                    showToast(result.message || 'Gagal memperbarui.', 'error');
+                }
             } else {
-                window.showToast(hasilAbsensi.message, 'error');
+                // Catat baru
+                const result = await API.recordAbsensi(
+                    currentScanData.code,
+                    currentScanData.nama,
+                    currentScanData.sesi,
+                    currentScanData.sesi_nama,
+                    user?.nama || 'Unknown',
+                    currentScanData.agama,
+                    puasa,
+                    pelanggaran,
+                    pelanggaranKeterangan,
+                    kondisiKesehatan,
+                    keteranganKesehatan,
+                    statusKehadiran
+                );
+                if (result.status === 'recorded') {
+                    if (statusKehadiran === 'Izin' && buktiSurat) {
+                        await API.addIzin({
+                            kode_peserta: currentScanData.code,
+                            nama_peserta: currentScanData.nama,
+                            tanggal: new Date().toISOString().split('T')[0],
+                            keterangan: 'Izin via scan QR',
+                            petugas: user?.nama || 'Unknown',
+                            bukti_surat: buktiSurat
+                        });
+                    }
+                    addLocalLog('recorded', catatan);
+                    resetScan();
+                    showToast('✅ Tercatat' + (catatan ? ' + catatan' : ''), 'success');
+                } else if (result.status === 'already_recorded') {
+                    addLocalLog('duplicate', catatan);
+                    resetScan();
+                    showToast('⚠️ Sudah tercatat sebelumnya', 'warning');
+                } else {
+                    showToast(result.message, 'error');
+                }
             }
         } catch(e) {
-            window.showToast('Gagal server', 'error');
+            showToast('Gagal server', 'error');
         }
         btn.disabled = false;
         btn.innerHTML = '<i class="fas fa-check-circle me-1"></i> Konfirmasi Absensi';
     }
 
     // ============================================================
-    //  10. LOG ABSENSI
+    //  FITUR PEMINJAMAN HP
     // ============================================================
-    function addLocalLog(status) {
+    async function checkHPStatus() {
+        if (!currentScanData) return;
+        try {
+            const result = await API.checkHP({
+                kode: currentScanData.code,
+                sesi: currentScanData.sesi
+            });
+            const msgContainer = document.getElementById('hpStatusMessage');
+            const actionContainer = document.getElementById('hpActionContainer');
+            const btnPinjam = document.getElementById('btnPinjamHP');
+            const btnKembalikan = document.getElementById('btnKembalikanHP');
+
+            if (result.status === 'found') {
+                if (result.lastStatus === 'Meminjam') {
+                    msgContainer.textContent = `Status HP: 📱 Dipinjam sejak ${result.lastDate} ${result.lastTime}`;
+                    actionContainer.style.display = 'block';
+                    btnPinjam.style.display = 'none';
+                    btnKembalikan.style.display = 'block';
+                    btnKembalikan.textContent = '↩️ Kembalikan HP';
+                } else {
+                    msgContainer.textContent = `Status HP: ✅ Sudah dikembalikan (${result.lastDate} ${result.lastTime})`;
+                    actionContainer.style.display = 'none';
+                }
+            } else {
+                msgContainer.textContent = '📱 Belum ada peminjaman HP untuk sesi ini.';
+                actionContainer.style.display = 'block';
+                btnPinjam.style.display = 'block';
+                btnKembalikan.style.display = 'none';
+                btnPinjam.textContent = '📱 Pinjam HP';
+            }
+        } catch (e) {
+            console.error('Gagal cek status HP:', e);
+        }
+    }
+
+    async function handleHP(action) {
+        if (!currentScanData) return;
+        const btn = document.getElementById(action === 'Meminjam' ? 'btnPinjamHP' : 'btnKembalikanHP');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Memproses...';
+
+        try {
+            const catatan = document.getElementById('catatanInput').value.trim();
+            const result = await API.recordHP({
+                kode: currentScanData.code,
+                nama: currentScanData.nama,
+                sesi: currentScanData.sesi,
+                sesi_nama: currentScanData.sesi_nama,
+                status: action,
+                petugas: user?.nama || 'Unknown',
+                catatan: catatan
+            });
+
+            if (result.status === 'success') {
+                showToast(`✅ HP ${action} tercatat.`, 'success');
+                await checkHPStatus();
+            } else {
+                showToast(result.message || 'Gagal mencatat.', 'error');
+            }
+        } catch (e) {
+            showToast('Gagal terhubung ke server.', 'error');
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = action === 'Meminjam' ? '📱 Pinjam HP' : '↩️ Kembalikan HP';
+        }
+    }
+
+    // ============================================================
+    //  LOG ABSENSI
+    // ============================================================
+    function addLocalLog(status, catatan = '') {
+        if (!currentScanData) return;
         localLog.unshift({
             nama: currentScanData.nama,
             kode: currentScanData.code,
             sesi: currentScanData.sesi_nama + (currentScanData.manual ? ' (M)' : ''),
             jam: new Date().toLocaleTimeString('id-ID', { hour:'2-digit', minute:'2-digit' }),
-            status
+            status,
+            catatan: catatan || ''
         });
         if (localLog.length > 30) localLog.pop();
         localStorage.setItem('srma19_absensi_log', JSON.stringify(localLog));
@@ -823,30 +1065,116 @@
         const container = document.getElementById('logContainer');
         if (!container) return;
         if (localLog.length) {
-            container.innerHTML = localLog.map(l =>
-                `<div class="log-item"><span><i class="fas ${l.status==='duplicate'?'fa-exclamation-triangle text-warning':'fa-check-circle text-success'}"></i> ${l.nama}</span><span class="small text-muted">${l.sesi} | ${l.jam}</span></div>`
-            ).join('');
+            container.innerHTML = localLog.map(l => {
+                const icon = l.status === 'duplicate'
+                    ? 'fa-exclamation-triangle text-warning'
+                    : 'fa-check-circle text-success';
+                return `<div class="log-item">
+                    <span><i class="fas ${icon}"></i> ${l.nama}</span>
+                    <span class="small text-muted">${l.sesi} | ${l.jam}</span>
+                    ${l.catatan ? `<span class="badge bg-light text-dark">📝 ${l.catatan}</span>` : ''}
+                </div>`;
+            }).join('');
         } else {
-            container.innerHTML = '<p class="text-center text-muted py-3 small">Belum ada data</p>';
+            container.innerHTML = '<p class="text-center text-muted py-2 small">Belum ada data</p>';
         }
     }
 
     // ============================================================
-    //  11. TEST KONEKSI
+    //  TOAST SYSTEM
+    // ============================================================
+    function showToast(msg, type = 'info') {
+        const colors = {
+            success: ['#10b981', '#ecfdf5', 'fa-check-circle'],
+            error: ['#ef4444', '#fef2f2', 'fa-times-circle'],
+            warning: ['#f59e0b', '#fffbeb', 'fa-exclamation-triangle'],
+            info: ['#3b82f6', '#eff6ff', 'fa-info-circle']
+        };
+        const [border, bg, icon] = colors[type] || colors.info;
+
+        let container = document.getElementById('toastContainer');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'toastContainer';
+            container.style.cssText = `
+                position: fixed; top: 24px; right: 24px; z-index: 99999;
+                display: flex; flex-direction: column; gap: 10px; max-width: 400px; width: 100%;
+                pointer-events: none;
+            `;
+            document.body.appendChild(container);
+        }
+
+        const toast = document.createElement('div');
+        toast.className = 'toast-item has-progress';
+        toast.style.cssText = `
+            pointer-events: auto; background: #ffffff; border-radius: 14px;
+            padding: 16px 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.04);
+            display: flex; align-items: center; gap: 14px;
+            animation: toastIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            transform-origin: top right; border: 1px solid rgba(0,0,0,0.04);
+            position: relative;
+        `;
+        toast.innerHTML = `
+            <div class="toast-icon ${type}" style="width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;background:${bg};color:${border};">
+                <i class="fas ${icon}"></i>
+            </div>
+            <div class="toast-content" style="flex:1;min-width:0;">
+                <div class="toast-title" style="font-weight:600;font-size:0.9rem;color:#1e293b;margin-bottom:2px;">
+                    ${type === 'success' ? 'Berhasil' : type === 'error' ? 'Gagal' : type === 'warning' ? 'Peringatan' : 'Informasi'}
+                </div>
+                <div class="toast-message" style="font-size:0.82rem;color:#64748b;margin:0;line-height:1.4;">${msg}</div>
+            </div>
+            <button class="toast-close" onclick="this.closest('.toast-item').remove()" style="background:none;border:none;color:#cbd5e1;cursor:pointer;font-size:1rem;padding:4px;transition:color0.2s;flex-shrink:0;">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="toast-progress" style="position:absolute;bottom:0;left:0;height:3px;background:${border};border-radius:0 0 14px 14px;animation:toastProgress 3.5s linear forwards;opacity:0.25;"></div>
+        `;
+        container.appendChild(toast);
+
+        setTimeout(() => {
+            if (toast.parentNode) {
+                toast.classList.add('removing');
+                toast.style.animation = 'toastOut 0.3s ease forwards';
+                setTimeout(() => { if (toast.parentNode) toast.remove(); }, 300);
+            }
+        }, 3800);
+    }
+    window.showToast = showToast;
+
+    // Tambahkan animasi CSS untuk toast
+    (function() {
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes toastIn {
+                from { opacity: 0; transform: translateX(40px) scale(0.95); }
+                to { opacity: 1; transform: translateX(0) scale(1); }
+            }
+            @keyframes toastOut {
+                from { opacity: 1; transform: translateX(0) scale(1); }
+                to { opacity: 0; transform: translateX(40px) scale(0.95); }
+            }
+            @keyframes toastProgress {
+                from { width: 100%; }
+                to { width: 0%; }
+            }
+        `;
+        document.head.appendChild(style);
+    })();
+
+    // ============================================================
+    //  TEST KONEKSI
     // ============================================================
     async function testConnection() {
         try {
             const r = await API.ping();
-            document.getElementById('connectionStatus').innerHTML = r.status === 'ok'
-                ? '<span class="pulse-dot me-1"></span><span class="text-success">Terhubung</span>'
-                : '<i class="fas fa-exclamation-triangle text-warning me-1"></i>Respons tidak dikenal';
+            document.getElementById('connectionStatus').textContent = r.status === 'ok' ? '🟢 Terhubung' : '⚠️ Respons tidak dikenal';
         } catch(e) {
-            document.getElementById('connectionStatus').innerHTML = '<i class="fas fa-times-circle text-danger me-1"></i>Gagal';
+            document.getElementById('connectionStatus').textContent = '🔴 Gagal';
         }
     }
 
     // ============================================================
-    //  12. INIT
+    //  INIT
     // ============================================================
     document.addEventListener('DOMContentLoaded', function() {
         fetchJadwal();

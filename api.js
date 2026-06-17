@@ -1,11 +1,11 @@
 // ============================================
 // api.js - Modul Komunikasi Google Apps Script
-// SRMA 19 Bantul | Versi 16.0 (Lengkap: Semua Menu)
+// SRMA 19 Bantul | Versi 18.0 (Lengkap: Semua Menu + HP + Update Absensi)
 // ============================================
 
 const API = (() => {
   // ⚠️ GANTI dengan URL Web App Google Apps Script Anda
-  const BASE_URL = 'https://script.google.com/macros/s/AKfycbyQ-cDOGAclcZDmke39N8Jq0E078w4Mm0i53cHtoAdK8tkRIrsOwMTk0-Cttn7mRUT5/exec';
+  const BASE_URL = 'https://script.google.com/macros/s/AKfycbzeHsKSV6bdx69ZGqSRl_2EhcjUPZbS1Tt5pXkhwtWH3kcgno1mCOncJQhFdEGGVwZ9/exec';
 
   /**
    * Request handler untuk GET (query string)
@@ -107,6 +107,9 @@ const API = (() => {
         status
       }),
 
+    // updateAbsensi – untuk menimpa data saat scan ulang
+    updateAbsensi: (data) => requestPostJSON('update_absensi', data),
+
     // listAbsensi dengan pagination (page, limit)
     listAbsensi: (tanggal = '', sesi = '', page = 1, limit = 100) =>
       request('list_absensi', { tanggal, sesi, page, limit }),
@@ -159,6 +162,10 @@ const API = (() => {
 
     // Sinkronisasi jumlah murid wali asuh
     syncWaliCount: () => request('sync_wali_count'),
+
+    // HP Peminjaman
+    recordHP: (data) => requestPostJSON('record_hp', data),
+    checkHP: (data) => request('check_hp', data),
 
     // Setup otomatis
     setup: () => request('setup')
